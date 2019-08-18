@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3f51b5</color>
+    <color name="colorPrimaryDark">#303f9f</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="transparent">#00000000</color>
+    <color name="bg_color">#ffffff</color>
+    <color name="black_overlay">#66000000</color>
+    <!--标题栏颜色-->
+    <color name="title_text_color">#ffffff</color>
+    <color name="title_bg_color">#76d6fe</color>
+    <color name="white_color">#ffffff</color>
+
+    <color name="text_deep_color">#323246</color>
+    <color name="text_middle_color">#646e91</color>
+    <color name="text_shallow_color">#9b9bbe</color>
+    <!-- 按钮颜色-->
+    <color name="btn_normal_end_color">#a0e2fe</color>
+    <color name="btn_normal_middle_color">#76d6fe</color>
+    <color name="btn_normal_start_color">#54b4ee</color>
+    <color name="btn_pressed_color">#76d6fe</color>
+    <color name="btn_enabled_color">#bbebff</color>
+    <color name="btn_normal_color">#76d6fe</color>
+
+    <!-- 对话框-->
+    <color name="bg_sub_color">#f2f2f2</color>
+    <color name="progress_color">#54b4ee</color>
+    <color name="dailog_text_color">#343434</color>
+    <color name="dialog_bg">#ffffff</color>
+    <color name="dialog_confirm_text_color">#007aff</color>
+    <color name="dialog_cancel_text_color">#999999</color>
+    <!--线条-->
+    <color name="line_color">#e5e5e5</color>
+    <color name="run_start_bg_color">#76d6fe</color>
+    <color name="run_stop_bg_color">#d95153</color>
+</resources>

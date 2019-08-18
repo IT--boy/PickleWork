@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_color">
+
+    <LinearLayout
+        android:id="@+id/errorLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:drawableTop="@drawable/lack_network"
+            android:drawablePadding="20sp"
+            android:text="页面加载失败，请重试！"
+            android:textColor="@color/text_middle_color"
+            android:textSize="15dp" />
+
+        <TextView
+            android:id="@+id/btnRetryLoad"
+            android:layout_width="125dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/btn_retry_bg"
+            android:gravity="center"
+            android:text="重新加载"
+            android:textColor="@color/white_color"
+            android:textSize="18sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressLoad"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminateDrawable="@drawable/load_progress_small"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/noDataLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:drawableTop="@drawable/lack_data"
+        android:drawablePadding="20sp"
+        android:gravity="center_horizontal"
+        android:text="暂无相关数据"
+        android:textColor="@color/text_middle_color"
+        android:textSize="15sp"
+        android:visibility="gone" />
+</FrameLayout>

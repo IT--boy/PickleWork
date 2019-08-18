@@ -1,0 +1,105 @@
+apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao'
+
+android {
+
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.pickcle.picklework"
+        minSdkVersion 20
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+        ndk {
+            abiFilters 'armeabi-v7a'
+        }
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath = true
+            }
+        }
+    }
+    signingConfigs {
+        config {
+            keyAlias 'autojs'
+            keyPassword 'autojs'
+            storeFile file('../key.jks')
+            storePassword 'autojs'
+        }
+    }
+    lintOptions {
+        disable 'MissingTranslation'
+        disable 'ExtraTranslation'
+    }
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+    productFlavors {
+        pickleWorkRelease {
+            applicationId "com.pickcle.picklework"
+            minSdkVersion 20
+            targetSdkVersion 28
+            versionName "0.0.1"
+            versionCode 1
+            flavorDimensions "1"
+        }
+    }
+    buildTypes {
+        debug{
+            buildConfigField "boolean", "API_ENV", "false"
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            android.applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "${variant.productFlavors[0].name}-${variant.productFlavors[0].versionName}-${variant.productFlavors[0].versionCode}.apk"
+                }
+            }
+        }
+        release {
+            buildConfigField "boolean", "API_ENV", "true"
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            android.applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "${variant.productFlavors[0].name}-${variant.productFlavors[0].versionName}-${variant.productFlavors[0].versionCode}.apk"
+                }
+            }
+        }
+    }
+}
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+    google()
+}
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    //Glide
+    implementation('com.github.bumptech.glide:glide:4.2.0', {
+        exclude group: 'com.android.support'
+    })
+    implementation project(':automator')
+    implementation project(':common')
+    implementation project(':autojs')
+
+    //id注解
+    implementation 'com.jakewharton:butterknife:8.5.1'
+    implementation 'com.jakewharton:butterknife-compiler:8.5.1'
+
+    implementation project(':justcan')
+
+    implementation 'org.xutils:xutils:3.5.0'
+    //分包
+    implementation 'com.android.support:multidex:1.0.1'
+
+    api 'de.greenrobot:eventbus:3.0.0-beta1'
+}

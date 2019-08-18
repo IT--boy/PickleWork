@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/titleItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/title_bg"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/subItem"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/status_bar_height_size" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_height_size">
+
+        <ImageView
+            android:id="@+id/btnLeftImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:paddingLeft="12dp"
+            android:paddingTop="16dp"
+            android:paddingRight="32dp"
+            android:paddingBottom="16dp"
+            android:src="@drawable/nav_return_white"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/btnLeftTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/btnLeftImg"
+            android:textColor="@color/title_text_color"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:paddingLeft="32dp"
+            android:paddingRight="32dp"
+            android:singleLine="true"
+            android:textColor="@color/title_text_color"
+            android:textSize="@dimen/title_text_size" />
+
+        <ImageView
+            android:id="@+id/btnRightImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingLeft="32dp"
+            android:paddingTop="16dp"
+            android:paddingRight="12dp"
+            android:paddingBottom="16dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/btnRightTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/btnRightImg"
+            android:paddingLeft="32dp"
+            android:paddingTop="12dp"
+            android:paddingRight="12dp"
+            android:paddingBottom="12dp"
+            android:textColor="@color/title_text_color"
+            android:textSize="@dimen/title_text_sub_size"
+            android:visibility="gone" />
+    </RelativeLayout>
+</LinearLayout>
