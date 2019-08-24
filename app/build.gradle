@@ -102,4 +102,9 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.1'
 
     api 'de.greenrobot:eventbus:3.0.0-beta1'
+
+    implementation 'com.github.pinguo-zhouwei:MZBannerView:v2.0.0'
+    implementation project(path: ':refresh-layout')
+
+    implementation 'net.zetetic:android-database-sqlcipher:3.5.7@aar'
 }

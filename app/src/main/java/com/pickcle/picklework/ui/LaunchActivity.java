@@ -14,12 +14,19 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.justcan.library.activity.RxAppActivity;
+import com.justcan.library.dialog.CBDialogBuilder;
+import com.justcan.library.utils.common.AppUtil;
+import com.justcan.library.utils.common.InputUtils;
+import com.justcan.library.utils.common.StringUtils;
+import com.justcan.library.utils.common.ToastUtil;
 import com.pickcle.picklework.PWApplication;
 import com.pickcle.picklework.Pref;
 import com.pickcle.picklework.R;
@@ -30,19 +37,12 @@ import com.pickcle.picklework.http.download.DownState;
 import com.pickcle.picklework.http.download.HttpDownManager;
 import com.pickcle.picklework.http.listener.HttpDownOnNextListener;
 import com.pickcle.picklework.http.listener.HttpOnNextListener;
-import com.pickcle.picklework.model.bean.SystemVersion;
+import com.pickcle.picklework.model.bean.VersionInfo;
+import com.pickcle.picklework.model.bean.VersionResponse;
 import com.pickcle.picklework.model.event.EmptyEvent;
-import com.pickcle.picklework.model.http.api.SystemVersionApi;
-import com.pickcle.picklework.model.http.request.SystemVersionRequest;
+import com.pickcle.picklework.model.http.api.AppVersionApi;
+import com.pickcle.picklework.model.http.request.VersionRequest;
 import com.pickcle.picklework.util.SdcardUtils;
-import com.justcan.library.activity.RxAppActivity;
-import com.justcan.library.dialog.CBDialogBuilder;
-import com.justcan.library.utils.common.AppUtil;
-import com.justcan.library.utils.common.InputUtils;
-import com.justcan.library.utils.common.StringUtils;
-import com.justcan.library.utils.common.ToastUtil;
-
-
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -77,7 +77,7 @@ public class LaunchActivity extends RxAppActivity {
             return;
         }
 
-
+        loadUpdateInfo();
     }
 
     private void main() {
@@ -133,8 +133,14 @@ public class LaunchActivity extends RxAppActivity {
 
     public void ChangeRestCountDown() {
         if (count <= 0) {
-            Intent gotoNext=new Intent(this,MainActivity.class);
-            startActivity(gotoNext);
+            if (!StringUtils.isEmpty(Pref.getCode())) {
+                Intent gotoNext = new Intent(this, MainWorkActivity.class);
+                startActivity(gotoNext);
+            } else {
+                Intent gotoNext = new Intent(this, MainActivity.class);
+                startActivity(gotoNext);
+            }
+
             finish();
             return;
         }
@@ -178,25 +184,40 @@ public class LaunchActivity extends RxAppActivity {
         handler.removeCallbacksAndMessages(null);
     }
 
-    private static SystemVersion update = null;
+    private static VersionInfo versionInfo = null;
 
     private void loadUpdateInfo() {
-        SystemVersionRequest request = new SystemVersionRequest();
-        request.setType(1);
-        request.setVersion(AppUtil.getVersionCode(getBaseContext()));
-        request.setPackageName(getPackageName());
+        VersionRequest request = new VersionRequest();
+        request.setAppVersion(AppUtil.getVersionCode(getBaseContext()));
+        request.setJsVersion(Pref.getJsVersionCode());
+        String deviceNo = AppUtil.getDeviceNo(getBaseContext());
+        if (StringUtils.isEmpty(deviceNo)) {
+            main();
+            return;
+        } else {
+            request.setDeviceNo(deviceNo);
+        }
 
-        SystemVersionApi api = new SystemVersionApi(new HttpOnNextListener<SystemVersion>() {
+        AppVersionApi api = new AppVersionApi(new HttpOnNextListener<VersionResponse>() {
             @Override
-            public void onSuccess(SystemVersion model) {
-                if (model != null) {
-                    update = model;
-                    if (model.getIsUpdate() == 0) {
-                        handler.sendEmptyMessage(HANDLER_CODE);
-                    } else {
-                        showNoticeDialog(model);
+            public void onSuccess(VersionResponse model) {
+                if (model != null && model.getDeviceInfor() != null) {
+                    Pref.putCode(model.getDeviceInfor().getInvitationCode());
+                }
+                if (model != null && model.getVersionInfo() != null) {
+                    versionInfo = model.getVersionInfo();
+                    if (versionInfo.getJsVersionCode() != null) {
+                        Pref.putJsVersionCode(model.getVersionInfo().getJsVersionCode());
                     }
 
+                    if (versionInfo.getAppUpdateFlag() == 0 && versionInfo.getJsUpdateFlag() == 0) {
+                        handler.sendEmptyMessage(HANDLER_CODE);
+                    } else {
+                        showNoticeDialog(model.getVersionInfo());
+                    }
+
+                } else {
+                    handler.sendEmptyMessage(HANDLER_CODE);
                 }
             }
 
@@ -215,7 +236,7 @@ public class LaunchActivity extends RxAppActivity {
      * 显示软件更新对话框
      */
 
-    private void showNoticeDialog(final SystemVersion update) {
+    private void showNoticeDialog(final VersionInfo update) {
         final CBDialogBuilder builder = new CBDialogBuilder(this);
         builder.setDialogAnimation(CBDialogBuilder.DIALOG_ANIM_SLID_BOTTOM);
         builder.setTouchOutSideCancelable(false);
@@ -236,8 +257,8 @@ public class LaunchActivity extends RxAppActivity {
         btnCancel.setTextColor(ContextCompat.getColor(this, R.color.dialog_confirm_text_color));
         btnConfirm.setTextColor(ContextCompat.getColor(this, R.color.dialog_cancel_text_color));
 
-        if (update.getForceUpdate() == 1) {
-            btnCancel.setText("退出葫芦+");
+        if (update.getAppForceUpate() == 1) {
+            btnCancel.setText("退出咸菜打工");
         } else {
             btnCancel.setText("取消");
         }
@@ -249,7 +270,7 @@ public class LaunchActivity extends RxAppActivity {
             @Override
             public boolean onKey(DialogInterface dialogInterface, int keyCode, KeyEvent keyEvent) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (update.getIsUpdate() == 1) {
+                    if (update.getAppUpdateFlag() == 1) {
                         return true;
                     }
                 }
@@ -267,7 +288,7 @@ public class LaunchActivity extends RxAppActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                if (update.getForceUpdate() == 1) {
+                if (update.getAppForceUpate() == 1) {
                     finish();
                 } else {
                     handler.sendEmptyMessage(HANDLER_CODE);
@@ -283,7 +304,7 @@ public class LaunchActivity extends RxAppActivity {
     private TextView content;
     private Dialog dialog;
 
-    private void showDownloadDialog(final SystemVersion update) {
+    private void showDownloadDialog(final VersionInfo update) {
         final CBDialogBuilder builder = new CBDialogBuilder(this);
         builder.setDialogAnimation(CBDialogBuilder.DIALOG_ANIM_SLID_BOTTOM);
         builder.setTouchOutSideCancelable(false);
@@ -302,7 +323,7 @@ public class LaunchActivity extends RxAppActivity {
             @Override
             public boolean onKey(DialogInterface dialogInterface, int keyCode, KeyEvent keyEvent) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (update.getIsUpdate() == 1) {
+                    if (update.getAppUpdateFlag() == 1) {
                         return true;
                     }
                 }
@@ -330,13 +351,14 @@ public class LaunchActivity extends RxAppActivity {
      */
     private String filePath;
 
-    private void downloadApk(final SystemVersion update) {
-        filePath = SdcardUtils.sdPath + "pickle_work/pickleWork_" + update.getVersionName() + ".apk";
+    private void downloadApk(final VersionInfo update) {
+        filePath = SdcardUtils.sdPath + "pickle_work/pw_app" + update.getAppVersionName() + ".apk";
         File file = new File(filePath);
-        DownInfo downInfo = new DownInfo(update.getUrl());
+        DownInfo downInfo = new DownInfo(PWApplication.getRequestUrl() + update.getAppUrl());
         downInfo.setSavePath(file.getAbsolutePath());
         downInfo.setState(DownState.START);
         downInfo.setListener(httpDownOnNextListener);
+        downInfo.setType(update.getAppUpdateFlag() == 1 ? 1 : 2);
 
         HttpDownManager.getInstance().startDown(downInfo);
     }
@@ -346,11 +368,15 @@ public class LaunchActivity extends RxAppActivity {
      */
     private HttpDownOnNextListener httpDownOnNextListener = new HttpDownOnNextListener<DownInfo>() {
         @Override
-        public void onNext(DownInfo o) {
+        public void onNext(DownInfo downInfo) {
             if (dialog != null) {
                 dialog.dismiss();
             }
-            installApk();
+            if (downInfo.getType() == 1) {
+                installApk();
+            } else {
+                handler.sendEmptyMessage(HANDLER_CODE);
+            }
         }
 
         @Override
@@ -361,6 +387,7 @@ public class LaunchActivity extends RxAppActivity {
         @Override
         public void onError(Throwable e) {
             super.onError(e);
+            e.printStackTrace();
             if (dialog != null) {
                 dialog.dismiss();
             }
@@ -384,11 +411,24 @@ public class LaunchActivity extends RxAppActivity {
      */
 
     private void installApk() {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        File file = new File(filePath);
 
-        intent.setDataAndType(Uri.parse("file://" + filePath), "application/vnd.android.package-archive");
-        this.startActivity(intent);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        // 由于没有在Activity环境下启动Activity,设置下面的标签
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            //判读版本是否在7.0以上
+            // 参数1 上下文, 参数2 Provider主机地址 和清单配置文件中保持一致
+            // 参数2 = android:authorities="应用包名.fileprovider"属性值
+            // 参数3 = 上一步中共享的apk文件
+            Uri apkUri = FileProvider.getUriForFile(getBaseContext(), "com.pickcle.picklework.fileprovider", file);
+            //添加这一句表示对目标应用临时授权该Uri所代表的文件
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+        } else {
+            intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+        }
+        startActivity(intent);
     }
 
 
@@ -404,7 +444,7 @@ public class LaunchActivity extends RxAppActivity {
     private void doNext(int requestCode, int[] grantResults) {
         if (requestCode == Constants.WRITE_EXTERNAL_STORAGE_TASK_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                downloadApk(update);
+                downloadApk(versionInfo);
             } else {
                 ToastUtil.showToast(this, R.string.no_use_prompt_text);
             }

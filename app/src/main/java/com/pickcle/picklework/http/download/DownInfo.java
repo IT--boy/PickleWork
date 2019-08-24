@@ -18,6 +18,7 @@ import org.greenrobot.greendao.annotation.Transient;
 public class DownInfo{
     @Id
     private long id;
+    private int type;
     /*存储位置*/
     private String savePath;
     /*文件总长度*/
@@ -46,10 +47,11 @@ public class DownInfo{
         setUrl(url);
     }
 
-    @Generated(hash = 656702907)
-    public DownInfo(long id, String savePath, long countLength, long readLength,
-                    int connectonTime, int stateInte, String url) {
+    @Generated(hash = 600577227)
+    public DownInfo(long id, int type, String savePath, long countLength,
+            long readLength, int connectonTime, int stateInte, String url) {
         this.id = id;
+        this.type = type;
         this.savePath = savePath;
         this.countLength = countLength;
         this.readLength = readLength;
@@ -158,5 +160,13 @@ public class DownInfo{
 
     public void setConnectonTime(int connectonTime) {
         this.connectonTime = connectonTime;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

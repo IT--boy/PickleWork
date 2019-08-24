@@ -5,17 +5,22 @@
 package com.pickcle.picklework.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.v4.content.FileProvider;
 import android.util.Base64;
 import android.util.Log;
 
+import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 
 public class AppUtil {
@@ -100,4 +105,30 @@ public class AppUtil {
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
 
+    public static boolean checkAppInstalled(Context context, String pkgName) {
+        if (pkgName == null || pkgName.isEmpty()) {
+            return false;
+        }
+        final PackageManager packageManager = context.getPackageManager();
+        List<PackageInfo> info = packageManager.getInstalledPackages(0);
+        if (info == null || info.isEmpty())
+            return false;
+        for (int i = 0; i < info.size(); i++) {
+            if (pkgName.equals(info.get(i).packageName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void openAssignFolder(Context context, String path) {
+        //获取到指定文件夹，这里为：/storage/emulated/0/Android/data/你的包	名/files/Download
+        File file = new File(path);
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        //7.0以上跳转系统文件需用FileProvider，参考链接：https://blog.csdn.net/growing_tree/article/details/71190741
+        Uri uri = FileProvider.getUriForFile(context, "com.pickcle.picklework.fileprovider", file);
+        intent.setData(uri);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        context.startActivity(intent);
+    }
 }

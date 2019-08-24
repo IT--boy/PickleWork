@@ -16,9 +16,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.justcan.library.RxRetrofitApp;
+import com.pickcle.picklework.util.SdcardUtils;
 import com.stardust.app.GlobalAppContext;
 import com.stardust.autojs.core.ui.inflater.ImageLoader;
 import com.stardust.autojs.core.ui.inflater.util.Drawables;
+
+import org.xutils.x;
 
 public class PWApplication extends Application {
     private static Context context;
@@ -27,6 +30,9 @@ public class PWApplication extends Application {
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
+
+        SdcardUtils.initSdcardFolders(getContext());
+        x.Ext.init(this);
         GlobalAppContext.set(this);
         AutoJs.initInstance(this);
         GlobalKeyObserver.init();

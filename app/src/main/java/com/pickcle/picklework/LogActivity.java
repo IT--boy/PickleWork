@@ -28,7 +28,7 @@ public class LogActivity extends AppCompatActivity {
     }
 
     private void setupView() {
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_log_layout);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ConsoleView consoleView = (ConsoleView) findViewById(R.id.console);

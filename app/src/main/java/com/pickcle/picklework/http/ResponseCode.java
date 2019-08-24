@@ -8,11 +8,11 @@ public class ResponseCode {
     /**
      * 失败
      */
-    public final static int OPERATE_FAILURE = 0;
+    public final static int OPERATE_FAILURE = 500;
     /***
      * 成功
      */
-    public final static int OPERATE_SUCCESS = 1;
+    public final static int OPERATE_SUCCESS = 0;
     /**
      * 时间戳不匹配
      */

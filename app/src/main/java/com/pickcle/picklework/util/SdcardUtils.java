@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
  * Note:Sd卡操作工具类
  */
 public class SdcardUtils {
-    private static String FILE_NAME = "justcan";
+    private static String FILE_NAME = "pw";
     public static final String NO_FIND_EXT_SDCARD_ROOT_PATH = "noFindExtSdcardRootPath";
     /**
      * 闹钟路径
@@ -33,12 +33,7 @@ public class SdcardUtils {
     /**
      * 图片路径
      */
-    public static String imagePath;
-    public static String haPath;
-    /**
-     * 音频路径
-     */
-    public static String musicPath;
+    public static String pwPath;
     /**
      * 包路径
      */
@@ -67,37 +62,28 @@ public class SdcardUtils {
     public static void initSdcardFolders( Context context) {
         File file;
         File musicFile;
-        File picFile;
-        File movieFile;
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             file = new File(Environment.getExternalStorageDirectory(), "");
-            movieFile = context.getExternalFilesDir(Environment.DIRECTORY_MOVIES);
-            picFile = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
             musicFile = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
         } else if (Build.MODEL.equals("ZTE U930HD")) {
             file = new File("/mnt/sdcard2");
             musicFile = null;
-            picFile = null;
-            movieFile = null;
         } else {
             file = context.getFilesDir();
             musicFile = null;
-            picFile = null;
-            movieFile = null;
         }
         SdcardUtils.packageHaPath = context.getFilesDir() + "/" + FILE_NAME + File.separator;
-        SdcardUtils.haPath = file.toString() + "/" + FILE_NAME + "/";
-        File shmsFile = new File(SdcardUtils.haPath);
+        SdcardUtils.pwPath = file.toString() + "/" + FILE_NAME + "/";
+        File shmsFile = new File(SdcardUtils.pwPath);
         if (!shmsFile.exists()) {
             shmsFile.mkdirs();
         }
         SdcardUtils.sdPath = file.toString() + "/";
-        String string = musicFile == null ? SdcardUtils.haPath + ".music/" : musicFile.toString() + "/";
-        SdcardUtils.musicPath = string;
-        SdcardUtils.cachePath = SdcardUtils.haPath + "cache/";
-        SdcardUtils.stickerPath = SdcardUtils.haPath + ".stickerSvg/";
-        SdcardUtils.alarmPath = SdcardUtils.haPath + "alarm/";
-        SdcardUtils.preferencesPath = SdcardUtils.haPath + ".preferences/";
+        String string = musicFile == null ? SdcardUtils.pwPath + ".music/" : musicFile.toString() + "/";
+        SdcardUtils.cachePath = SdcardUtils.pwPath + "cache/";
+        SdcardUtils.stickerPath = SdcardUtils.pwPath + ".stickerSvg/";
+        SdcardUtils.alarmPath = SdcardUtils.pwPath + "alarm/";
+        SdcardUtils.preferencesPath = SdcardUtils.pwPath + ".preferences/";
 
 
         SdcardUtils.mkDirs(context);
@@ -150,7 +136,6 @@ public class SdcardUtils {
     }
 
     private static void mkDirs(Context context) {
-        mkImageAndVideoDirs();
         if (!new File(cachePath).exists()) {
             new File(cachePath).mkdirs();
         }
@@ -162,9 +147,6 @@ public class SdcardUtils {
         }
         if (!new File(preferencesPath).exists()) {
             new File(preferencesPath).mkdirs();
-        }
-        if (!new File(musicPath).exists()) {
-            new File(musicPath).mkdirs();
         }
         if (!new File(packageHaPath).exists()) {
             new File(packageHaPath).mkdirs();
@@ -179,17 +161,6 @@ public class SdcardUtils {
         return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
-    /**
-     * 创建目录
-     */
-    public static void mkImageAndVideoDirs() {
-        if (!new File(imagePath).exists()) {
-            new File(imagePath).mkdirs();
-        }
-        if (!new File(videoPath).exists()) {
-            new File(videoPath).mkdirs();
-        }
-    }
 
     /**
      * 删除文件

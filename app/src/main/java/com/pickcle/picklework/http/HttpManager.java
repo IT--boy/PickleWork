@@ -63,7 +63,7 @@ public class HttpManager {
         //头部信息
         builder.addInterceptor(new HeaderInterceptor(basePar.getHmpCode()));
         //参数
-        builder.addInterceptor(new ParamInterceptor(basePar.isAuth(), basePar.getHmpCode()));
+//        builder.addInterceptor(new ParamInterceptor(basePar.isAuth(), basePar.getHmpCode()));
         if (RxRetrofitApp.isDebug()) {
             builder.addInterceptor(getHttpLoggingInterceptor());
         }
@@ -114,7 +114,7 @@ public class HttpManager {
         //头部信息
         builder.addInterceptor(new HeaderInterceptor(basePar.getHmpCode()));
         //参数
-        builder.addInterceptor(new ParamInterceptor(basePar.isAuth(), basePar.getHmpCode()));
+//        builder.addInterceptor(new ParamInterceptor(basePar.isAuth(), basePar.getHmpCode()));
         if (RxRetrofitApp.isDebug()) {
             builder.addInterceptor(getHttpLoggingInterceptor());
         }

@@ -6,37 +6,37 @@ package com.pickcle.picklework.http.api;
  */
 public class BaseResultEntity {
     //  判断标示
-    private int returnCode;
+    private int code;
     //    提示信息
-    private String returnMsg;
+    private String msg;
     //显示数据（用户需要关心的数据）
-    private String content;
+    private String data;
     //类型
     private int type;
 
-    public String getReturnMsg() {
-        return returnMsg;
+    public String getMsg() {
+        return msg;
     }
 
-    public void setReturnMsg(String returnMsg) {
-        this.returnMsg = returnMsg;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
 
-    public String getContent() {
-        return content;
+    public String getData() {
+        return data;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setData(String data) {
+        this.data = data;
     }
 
-    public int getReturnCode() {
-        return returnCode;
+    public int getCode() {
+        return code;
     }
 
-    public void setReturnCode(int returnCode) {
-        this.returnCode = returnCode;
+    public void setCode(int code) {
+        this.code = code;
     }
 
     public int getType() {

@@ -52,14 +52,14 @@ public class FastJsonResponseBodyConverter<T> implements Converter<ResponseBody,
 
             BaseResultEntity baseResultEntity = JSONObject.parseObject(tempStr, BaseResultEntity.class);
             if (baseResultEntity != null) {
-                switch (baseResultEntity.getReturnCode()) {
+                switch (baseResultEntity.getCode()) {
                     case ResponseCode.OPERATE_FAILURE:
-                        throw new CodeFailException(baseResultEntity.getReturnMsg());
+                        throw new CodeFailException(baseResultEntity.getMsg());
                     case ResponseCode.OPERATE_SUCCESS:
-                        if (StringUtils.isEmpty(baseResultEntity.getContent()) || StringUtils.isEmpty(baseResultEntity.getContent().replace("{}", ""))) {
-                            throw new EmptyException(baseResultEntity.getReturnMsg());
+                        if (StringUtils.isEmpty(baseResultEntity.getData()) || StringUtils.isEmpty(baseResultEntity.getData().replace("{}", ""))) {
+                            throw new EmptyException(baseResultEntity.getMsg());
                         } else {
-                            return JSON.parseObject(baseResultEntity.getContent(), type);
+                            return JSON.parseObject(baseResultEntity.getData(), type);
                         }
 
                     case ResponseCode.TOKEN_EMPTY:
@@ -73,17 +73,17 @@ public class FastJsonResponseBodyConverter<T> implements Converter<ResponseBody,
                     case ResponseCode.REQUEST_EMPTY:
                     case ResponseCode.REQUEST_MORE:
                     case ResponseCode.PARAM_NOT_MATCH:
-                        throw new HttpTimeException(baseResultEntity.getReturnMsg());
+                        throw new HttpTimeException(baseResultEntity.getMsg());
                     case ResponseCode.SERIAL_NUMBER_REPEAT:
                     case ResponseCode.MOTION_PLAN_EXIST:
                     case ResponseCode.MOTION_PLAN_OUT_OF_DATE:
                     case ResponseCode.USER_LOCK:
-                        throw new SpecialException(baseResultEntity.getReturnCode());
+                        throw new SpecialException(baseResultEntity.getCode());
                     case ResponseCode.MOBILE_NO_BIND:
 
                         return JSON.parseObject(tempStr, type);
                     default:
-                        throw new CodeException(baseResultEntity.getReturnMsg());
+                        throw new CodeException(baseResultEntity.getMsg());
                 }
             }
         }

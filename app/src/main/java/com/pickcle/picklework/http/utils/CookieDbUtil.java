@@ -3,11 +3,11 @@ package com.pickcle.picklework.http.utils;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.justcan.library.RxRetrofitApp;
 import com.pickcle.picklework.http.cookie.CookieResult;
 import com.pickcle.picklework.http.cookie.CookieResultDao;
 import com.pickcle.picklework.http.cookie.DaoMaster;
 import com.pickcle.picklework.http.cookie.DaoSession;
-import com.justcan.library.RxRetrofitApp;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
@@ -22,7 +22,7 @@ import java.util.List;
 
 public class CookieDbUtil {
     private static CookieDbUtil db;
-    private final static String dbName = "tests_db";
+    private final static String dbName = "pickle_work_db";
     private DaoMaster.DevOpenHelper openHelper;
     private Context context;
 

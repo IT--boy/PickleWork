@@ -1,1 +1,1 @@
-include ':app', ':common', ':automator', ':autojs', ':justcan'
+include ':app', ':common', ':automator', ':autojs', ':justcan', ':refresh-layout'

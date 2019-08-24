@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.Window;
 
+import com.pickcle.picklework.http.HttpManager;
 import com.pickcle.picklework.model.event.EmptyEvent;
 import com.justcan.library.activity.RxAppActivity;
 
@@ -22,7 +23,7 @@ import de.greenrobot.event.ThreadMode;
 public abstract class BaseActivity extends RxAppActivity {
 
     private Context context;
-
+    public HttpManager httpManager;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +32,7 @@ public abstract class BaseActivity extends RxAppActivity {
 
         setContentView(getContentViewId());
 
+        initHttp();
         ButterKnife.bind(this);
 
         EventBus.getDefault().register(this);
@@ -41,7 +43,12 @@ public abstract class BaseActivity extends RxAppActivity {
     public Context getContext() {
         return context;
     }
-
+    /**
+     * 实例化
+     */
+    private void initHttp() {
+        httpManager = HttpManager.getInstance();
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

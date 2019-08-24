@@ -23,7 +23,7 @@ import okhttp3.RequestBody;
 public abstract class PostApi extends BaseApi {
     //参数类型
     private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
-    private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("image/png");
+    private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
 
     private RequestBody requestBody;
     private MultipartBody multipartBody;

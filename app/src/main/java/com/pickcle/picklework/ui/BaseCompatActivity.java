@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.pickcle.picklework.http.HttpManager;
 import com.pickcle.picklework.model.event.EmptyEvent;
 import com.justcan.library.activity.RxFragmentActivity;
 
@@ -24,6 +25,7 @@ import de.greenrobot.event.ThreadMode;
  */
 public abstract class BaseCompatActivity extends RxFragmentActivity {
     private Context context;
+    public HttpManager httpManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +42,8 @@ public abstract class BaseCompatActivity extends RxFragmentActivity {
         }
         setContentView(getContentViewId());
 
+        initHttp();
+
         ButterKnife.bind(this);
 
         EventBus.getDefault().register(this);
@@ -50,7 +54,12 @@ public abstract class BaseCompatActivity extends RxFragmentActivity {
     public Context getContext() {
         return context;
     }
-
+    /**
+     * 实例化
+     */
+    private void initHttp() {
+        httpManager = HttpManager.getInstance();
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

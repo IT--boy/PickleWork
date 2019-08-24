@@ -5,6 +5,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.telephony.TelephonyManager;
+
+import java.lang.reflect.Method;
 
 /**
  * 方法工具类
@@ -87,6 +90,28 @@ public class AppUtil {
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
+        }
+    }
+
+    public static String getDeviceNo(Context context) {
+
+        String deviceNo = getIMEI(context, 0);
+        if (StringUtils.isEmpty(deviceNo)) {
+            deviceNo = getIMEI(context, 1);
+            return deviceNo;
+        } else {
+            return deviceNo;
+        }
+    }
+
+    public static String getIMEI(Context context, int slotId) {
+        try {
+            TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            Method method = manager.getClass().getMethod("getImei", int.class);
+            String imei = (String) method.invoke(manager, slotId);
+            return imei;
+        } catch (Exception e) {
+            return "";
         }
     }
 }

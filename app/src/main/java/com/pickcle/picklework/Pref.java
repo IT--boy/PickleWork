@@ -11,7 +11,7 @@ import com.stardust.app.GlobalAppContext;
 
 public class Pref {
 
-    private static final String KEY_FIRST_USING = "key_first_using";
+    private static final String KEY_FIRST_USING = "pickle_work_key";
     private static SharedPreferences sPreferences;
 
     public static SharedPreferences getPreferences() {
@@ -46,5 +46,21 @@ public class Pref {
             getPreferences().edit().putBoolean(KEY_FIRST_USING, false).apply();
         }
         return firstUsing;
+    }
+
+    public static void putCode(String code) {
+        getPreferences().edit().putString("code", code).apply();
+    }
+
+    public static String getCode() {
+        return getPreferences().getString("code", "");
+    }
+
+    public static void putJsVersionCode(int code) {
+        getPreferences().edit().putInt("js_version_code", code).apply();
+    }
+
+    public static int getJsVersionCode() {
+        return getPreferences().getInt("js_version_code", 1);
     }
 }

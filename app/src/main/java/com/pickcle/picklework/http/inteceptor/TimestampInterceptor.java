@@ -25,7 +25,7 @@ public class TimestampInterceptor implements Interceptor {
 
         if (response.code() == 200) {
             BaseResultEntity baseResultEntity = JSONObject.parseObject(response.body().string(), BaseResultEntity.class);
-            if (baseResultEntity != null && baseResultEntity.getReturnCode() == ResponseCode.TIMESTAMP_NOT_MATCH) {
+            if (baseResultEntity != null && baseResultEntity.getCode() == ResponseCode.TIMESTAMP_NOT_MATCH) {
 
             }
             return chain.proceed(original);
