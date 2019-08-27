@@ -1,12 +1,15 @@
 package com.pickcle.picklework.ui;
 
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -15,22 +18,40 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.justcan.library.dialog.CBDialogBuilder;
 import com.justcan.library.utils.common.AppUtil;
+import com.justcan.library.utils.common.InputUtils;
 import com.justcan.library.utils.common.PermissionPageUtils;
 import com.justcan.library.utils.common.StringUtils;
 import com.justcan.library.utils.common.ToastUtil;
+import com.pickcle.picklework.PWApplication;
+import com.pickcle.picklework.Pref;
 import com.pickcle.picklework.R;
 import com.pickcle.picklework.SettingsActivity;
 import com.pickcle.picklework.adapter.MainBannerAdapter;
+import com.pickcle.picklework.autojs.script.ScriptFile;
+import com.pickcle.picklework.autojs.script.Scripts;
+import com.pickcle.picklework.http.HttpManager;
+import com.pickcle.picklework.http.download.DownInfo;
+import com.pickcle.picklework.http.download.DownState;
+import com.pickcle.picklework.http.download.HttpDownManager;
+import com.pickcle.picklework.http.listener.HttpDownOnNextListener;
 import com.pickcle.picklework.http.listener.HttpOnNextListener;
 import com.pickcle.picklework.model.bean.BannerListResponse;
 import com.pickcle.picklework.model.bean.DeviceInfoResponse;
 import com.pickcle.picklework.model.bean.DeviceInfor;
+import com.pickcle.picklework.model.bean.VersionInfo;
+import com.pickcle.picklework.model.bean.VersionResponse;
 import com.pickcle.picklework.model.http.api.AppBannerListApi;
 import com.pickcle.picklework.model.http.api.AppDeviceInfoApi;
+import com.pickcle.picklework.model.http.api.AppVersionApi;
 import com.pickcle.picklework.model.http.request.BaseRequest;
+import com.pickcle.picklework.model.http.request.VersionRequest;
+import com.pickcle.picklework.util.SdcardUtils;
 import com.zhouwei.mzbanner.MZBannerView;
 import com.zhouwei.mzbanner.holder.MZHolderCreator;
+
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -379,6 +400,7 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
     //开始打工
     @OnClick(R.id.btnStartWork)
     public void btnStartWork(View view) {
+        loadUpdateInfo(2);
 
     }
 
@@ -391,13 +413,166 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
     //开始学习
     @OnClick(R.id.btnStartStudy)
     public void btnStartStudy(View view) {
-
+        loadUpdateInfo(3);
     }
 
     //停止学习
     @OnClick(R.id.btnStopStudy)
     public void btnStopStudy(View view) {
 
+    }
+
+    private void loadUpdateInfo(Integer type) {
+        VersionRequest request = new VersionRequest();
+        if (type == 2) {
+            request.setVersionNo(Pref.getJsWorkVersionCode());
+        } else if (type == 3) {
+            request.setVersionNo(Pref.getJsStudyVersionCode());
+        }
+        request.setType(type);
+        request.setDeviceNo(AppUtil.getDeviceNo(getBaseContext()));
+
+        AppVersionApi api = new AppVersionApi(new HttpOnNextListener<VersionResponse>() {
+            @Override
+            public void onSuccess(VersionResponse model) {
+                if (model != null) {
+                    if (model.getDeviceInfor() != null) {
+                        Pref.putCode(model.getDeviceInfor().getInvitationCode());
+                    }
+                    if (model.getVersionInfo() != null && !StringUtils.isEmpty(model.getVersionInfo().getDownUrl())) {
+                        if (type == 2) {
+                            Pref.putJsWorkVersionCode(model.getVersionInfo().getVersionNo());
+                        } else if (type == 3) {
+                            Pref.putJsStudyVersionCode(model.getVersionInfo().getVersionNo());
+                        }
+                        filePath = SdcardUtils.sdPath + "pickle_work/pw_js_" + model.getVersionInfo().getVersionName() + ".js";
+                        File file = new File(filePath);
+                        if (model.getVersionInfo().getUpdateFlag() == 1 || !file.exists()) {
+                            showDownloadDialog(model.getVersionInfo());
+                        } else {
+                            runScript();
+                        }
+                    } else {
+                        ToastUtil.showToast(getContext(), "数据异常");
+                    }
+                } else {
+                    ToastUtil.showToast(getContext(), "数据异常");
+                }
+
+            }
+
+            @Override
+            public void onError(String message) {
+            }
+        }, this);
+        api.setShowProgress(true);
+        api.setLoadContent("加载中");
+        api.addRequstBody(request);
+
+        HttpManager.getInstance().doHttpDealF(api);
+    }
+
+    /**
+     * 显示软件下载对话框
+     */
+    private ProgressBar progressBarDownload;
+    private TextView content;
+    private Dialog dialog;
+
+    private void showDownloadDialog(final VersionInfo update) {
+        final CBDialogBuilder builder = new CBDialogBuilder(this);
+        builder.setDialogAnimation(CBDialogBuilder.DIALOG_ANIM_SLID_BOTTOM);
+        builder.setTouchOutSideCancelable(false);
+
+        View customView = LayoutInflater.from(PWApplication.getContext()).inflate(R.layout.dialog_content_progress_bar_layout, null);
+
+        content = customView.findViewById(R.id.content);
+        content.setText("正在更新");
+
+        progressBarDownload = customView.findViewById(R.id.progressBarDownload);
+
+        builder.setView(customView);
+        dialog = builder.create();
+        dialog.show();
+        dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialogInterface, int keyCode, KeyEvent keyEvent) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    if (update.getUpdateFlag() == 1) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+        downloadApk(update);
+
+    }
+
+    /**
+     * 下载apk
+     */
+    private String filePath;
+
+    private void downloadApk(final VersionInfo update) {
+        filePath = SdcardUtils.sdPath + "pickle_work/pw_js_" + update.getVersionName() + ".js";
+        File file = new File(filePath);
+        DownInfo downInfo = new DownInfo(PWApplication.getRequestUrl() + update.getDownUrl());
+        downInfo.setSavePath(file.getAbsolutePath());
+        downInfo.setState(DownState.START);
+        downInfo.setListener(httpDownOnNextListener);
+
+        HttpDownManager.getInstance().startDown(downInfo);
+    }
+
+    private void runScript() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ScriptFile scriptFile = new ScriptFile(filePath);
+                Scripts.run(scriptFile);
+            }
+        }).start();
+
+    }
+
+    /**
+     * 下载监听
+     */
+    private HttpDownOnNextListener httpDownOnNextListener = new HttpDownOnNextListener<DownInfo>() {
+        @Override
+        public void onNext(DownInfo downInfo) {
+            if (dialog != null) {
+                dialog.dismiss();
+            }
+            runScript();
+        }
+
+        @Override
+        public void updateProgress(long readLength, long countLength) {
+            updateProgressUi(readLength, countLength);
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            super.onError(e);
+            e.printStackTrace();
+            if (dialog != null) {
+                dialog.dismiss();
+            }
+        }
+    };
+
+    /**
+     * 更新进度条
+     */
+
+    private void updateProgressUi(long finishedSize, long totalSize) {
+        finishedSize = Math.min(finishedSize, totalSize);
+
+        Object[] arrobject = new Object[]{StringUtils.formatSize(finishedSize), StringUtils.formatSize(totalSize)};
+        content.setText("正在下载" + arrobject[0] + "/" + arrobject[1]);
+        progressBarDownload.setProgress(InputUtils.getPercentage(finishedSize, totalSize));
     }
 
     @Override

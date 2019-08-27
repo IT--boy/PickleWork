@@ -37,38 +37,21 @@ android {
         sourceCompatibility 1.8
         targetCompatibility 1.8
     }
-    productFlavors {
-        pickleWorkRelease {
-            applicationId "com.pickcle.picklework"
-            minSdkVersion 20
-            targetSdkVersion 28
-            versionName "0.0.1"
-            versionCode 1
-            flavorDimensions "1"
-        }
-    }
+
     buildTypes {
         debug{
             buildConfigField "boolean", "API_ENV", "false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
-            android.applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "${variant.productFlavors[0].name}-${variant.productFlavors[0].versionName}-${variant.productFlavors[0].versionCode}.apk"
-                }
-            }
+
         }
         release {
             buildConfigField "boolean", "API_ENV", "true"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
-            android.applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "${variant.productFlavors[0].name}-${variant.productFlavors[0].versionName}-${variant.productFlavors[0].versionCode}.apk"
-                }
-            }
+
         }
     }
 }
@@ -107,4 +90,8 @@ dependencies {
     implementation project(path: ':refresh-layout')
 
     implementation 'net.zetetic:android-database-sqlcipher:3.5.7@aar'
+
+    compileOnly("com.tinkerpatch.tinker:tinker-android-anno:1.9.13.3")
+    implementation("com.tinkerpatch.sdk:tinkerpatch-android-sdk:1.2.13.3")
 }
+apply from: 'tinkerpatch.gradle'

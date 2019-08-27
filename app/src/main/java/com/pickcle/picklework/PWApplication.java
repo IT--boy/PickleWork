@@ -9,29 +9,57 @@ import android.support.multidex.MultiDex;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.pickcle.picklework.autojs.AutoJs;
-import com.pickcle.picklework.autojs.GlobalKeyObserver;
-import com.pickcle.picklework.model.http.service.HttpConstants;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.justcan.library.RxRetrofitApp;
+import com.pickcle.picklework.autojs.AutoJs;
+import com.pickcle.picklework.autojs.GlobalKeyObserver;
+import com.pickcle.picklework.model.http.service.HttpConstants;
 import com.pickcle.picklework.util.SdcardUtils;
 import com.stardust.app.GlobalAppContext;
 import com.stardust.autojs.core.ui.inflater.ImageLoader;
 import com.stardust.autojs.core.ui.inflater.util.Drawables;
+import com.tencent.tinker.entry.ApplicationLike;
+import com.tinkerpatch.sdk.TinkerPatch;
+import com.tinkerpatch.sdk.loader.TinkerPatchApplicationLike;
 
 import org.xutils.x;
 
 public class PWApplication extends Application {
     private static Context context;
     private static String requestUrl;
+    private ApplicationLike tinkerApplicationLike;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        initThinker();
         context = getApplicationContext();
 
         SdcardUtils.initSdcardFolders(getContext());
+
+        initLibs();
+
+        initUrl();
+    }
+
+    private void initThinker() {
+        // 我们可以从这里获得Tinker加载过程的信息
+        tinkerApplicationLike = TinkerPatchApplicationLike.getTinkerPatchApplicationLike();
+
+        // 初始化TinkerPatch SDK, 更多配置可参照API章节中的,初始化SDK
+        TinkerPatch.init(tinkerApplicationLike)
+                .reflectPatchLibrary()
+                .setPatchRollbackOnScreenOff(true)
+                .setPatchRestartOnSrceenOff(true)
+                .setFetchPatchIntervalByHours(3);
+
+        // 每隔3个小时(通过setFetchPatchIntervalByHours设置)去访问后台时候有更新,通过handler实现轮训的效果
+        TinkerPatch.with().fetchPatchUpdateAndPollWithInterval();
+    }
+
+    private void initLibs() {
         x.Ext.init(this);
         GlobalAppContext.set(this);
         AutoJs.initInstance(this);
@@ -86,7 +114,7 @@ public class PWApplication extends Application {
                         });
             }
         });
-        initUrl();
+
     }
 
     private void initUrl() {

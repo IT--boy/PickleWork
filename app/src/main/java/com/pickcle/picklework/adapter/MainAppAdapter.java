@@ -94,8 +94,7 @@ public class MainAppAdapter extends BaseAdapter {
         btnOpen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String path = SdcardUtils.sdPath + "/app_run";
-                AppUtil.openAssignFolder(context, path);
+                context.installApk(filePath);
             }
         });
         if (i == appInforList.size() - 1) {

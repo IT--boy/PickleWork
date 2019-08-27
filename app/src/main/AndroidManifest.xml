@@ -15,7 +15,7 @@
     <!-- 非Auto.js运行必需，不会主动申请，某些脚本可以自行申请-->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
 
     <application
         android:allowBackup="true"
@@ -38,7 +38,7 @@
 
         <service
             android:name="com.pickcle.picklework.autojs.AccessibilityService"
-            android:label="inrt"
+            android:label="咸菜打工"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService"/>
@@ -82,7 +82,7 @@
         </activity>
         <service
             android:name="com.stardust.notification.NotificationListenerService"
-            android:label="inrt"
+            android:label="咸菜打工"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService"/>

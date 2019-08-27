@@ -78,7 +78,7 @@
                     android:paddingTop="4dp"
                     android:paddingRight="16dp"
                     android:paddingBottom="4dp"
-                    android:text="打开安装"
+                    android:text="安装"
                     android:textColor="@color/white_color"
                     android:textSize="14dp" />
             </RelativeLayout>

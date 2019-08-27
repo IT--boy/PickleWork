@@ -63,7 +63,7 @@ dependencies {
     implementation(name: 'libtermexec-release', ext: 'aar')
     implementation(name: 'emulatorview-release', ext: 'aar')
     implementation(name: 'term-debug', ext: 'aar')
-    implementation files('libs/rhino-1.7.7.2.jar')
+    api files('libs/rhino-1.7.7.2.jar')
     implementation project(path: ':common')
     implementation project(path: ':automator')
 }

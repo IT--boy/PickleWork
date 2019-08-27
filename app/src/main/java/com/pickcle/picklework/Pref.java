@@ -56,11 +56,19 @@ public class Pref {
         return getPreferences().getString("code", "");
     }
 
-    public static void putJsVersionCode(int code) {
-        getPreferences().edit().putInt("js_version_code", code).apply();
+    public static void putJsWorkVersionCode(int code) {
+        getPreferences().edit().putInt("js_work_version_code", code).apply();
     }
 
-    public static int getJsVersionCode() {
-        return getPreferences().getInt("js_version_code", 1);
+    public static int getJsWorkVersionCode() {
+        return getPreferences().getInt("js_work_version_code", 1);
+    }
+
+    public static void putJsStudyVersionCode(int code) {
+        getPreferences().edit().putInt("js_study_version_code", code).apply();
+    }
+
+    public static int getJsStudyVersionCode() {
+        return getPreferences().getInt("js_study_version_code", 1);
     }
 }

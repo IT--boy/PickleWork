@@ -181,7 +181,10 @@ public class QrCodeInfoActivity extends BaseTitleCompatActivity {
         httpManager.doHttpDealF(api);
 
     }
-
+    @OnClick(R.id.btnRetryLoad)
+    public void btnRetryLoad(View view) {
+        loadQrcodeInfo();
+    }
     @Override
     public int getLayoutId() {
         return R.layout.activity_qrcode_info_layout;

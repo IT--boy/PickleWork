@@ -188,8 +188,8 @@ public class LaunchActivity extends RxAppActivity {
 
     private void loadUpdateInfo() {
         VersionRequest request = new VersionRequest();
-        request.setAppVersion(AppUtil.getVersionCode(getBaseContext()));
-        request.setJsVersion(Pref.getJsVersionCode());
+        request.setVersionNo(AppUtil.getVersionCode(getBaseContext()));
+        request.setType(1);
         String deviceNo = AppUtil.getDeviceNo(getBaseContext());
         if (StringUtils.isEmpty(deviceNo)) {
             main();
@@ -206,11 +206,8 @@ public class LaunchActivity extends RxAppActivity {
                 }
                 if (model != null && model.getVersionInfo() != null) {
                     versionInfo = model.getVersionInfo();
-                    if (versionInfo.getJsVersionCode() != null) {
-                        Pref.putJsVersionCode(model.getVersionInfo().getJsVersionCode());
-                    }
 
-                    if (versionInfo.getAppUpdateFlag() == 0 && versionInfo.getJsUpdateFlag() == 0) {
+                    if (versionInfo.getUpdateFlag() == 0) {
                         handler.sendEmptyMessage(HANDLER_CODE);
                     } else {
                         showNoticeDialog(model.getVersionInfo());
@@ -257,7 +254,7 @@ public class LaunchActivity extends RxAppActivity {
         btnCancel.setTextColor(ContextCompat.getColor(this, R.color.dialog_confirm_text_color));
         btnConfirm.setTextColor(ContextCompat.getColor(this, R.color.dialog_cancel_text_color));
 
-        if (update.getAppForceUpate() == 1) {
+        if (update.getForceUpate() == 1) {
             btnCancel.setText("退出咸菜打工");
         } else {
             btnCancel.setText("取消");
@@ -270,7 +267,7 @@ public class LaunchActivity extends RxAppActivity {
             @Override
             public boolean onKey(DialogInterface dialogInterface, int keyCode, KeyEvent keyEvent) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (update.getAppUpdateFlag() == 1) {
+                    if (update.getUpdateFlag() == 1) {
                         return true;
                     }
                 }
@@ -288,7 +285,7 @@ public class LaunchActivity extends RxAppActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                if (update.getAppForceUpate() == 1) {
+                if (update.getForceUpate() == 1) {
                     finish();
                 } else {
                     handler.sendEmptyMessage(HANDLER_CODE);
@@ -323,7 +320,7 @@ public class LaunchActivity extends RxAppActivity {
             @Override
             public boolean onKey(DialogInterface dialogInterface, int keyCode, KeyEvent keyEvent) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (update.getAppUpdateFlag() == 1) {
+                    if (update.getUpdateFlag() == 1) {
                         return true;
                     }
                 }
@@ -352,13 +349,12 @@ public class LaunchActivity extends RxAppActivity {
     private String filePath;
 
     private void downloadApk(final VersionInfo update) {
-        filePath = SdcardUtils.sdPath + "pickle_work/pw_app" + update.getAppVersionName() + ".apk";
+        filePath = SdcardUtils.sdPath + "pickle_work/pw_app_" + update.getVersionName() + ".apk";
         File file = new File(filePath);
-        DownInfo downInfo = new DownInfo(PWApplication.getRequestUrl() + update.getAppUrl());
+        DownInfo downInfo = new DownInfo(PWApplication.getRequestUrl() + update.getDownUrl());
         downInfo.setSavePath(file.getAbsolutePath());
         downInfo.setState(DownState.START);
         downInfo.setListener(httpDownOnNextListener);
-        downInfo.setType(update.getAppUpdateFlag() == 1 ? 1 : 2);
 
         HttpDownManager.getInstance().startDown(downInfo);
     }
@@ -372,11 +368,8 @@ public class LaunchActivity extends RxAppActivity {
             if (dialog != null) {
                 dialog.dismiss();
             }
-            if (downInfo.getType() == 1) {
-                installApk();
-            } else {
-                handler.sendEmptyMessage(HANDLER_CODE);
-            }
+            installApk();
+            handler.sendEmptyMessage(HANDLER_CODE);
         }
 
         @Override

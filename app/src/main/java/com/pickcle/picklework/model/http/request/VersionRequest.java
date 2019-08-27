@@ -7,25 +7,25 @@ public class VersionRequest extends BaseRequest{
     /**
      * app版本号
      */
-    private Integer appVersion;
+    private Integer versionNo;
     /**
-     * js版本号
+     * 更新类型
      */
-    private Integer jsVersion;
+    private Integer type;
 
-    public Integer getAppVersion() {
-        return appVersion;
+    public Integer getVersionNo() {
+        return versionNo;
     }
 
-    public void setAppVersion(Integer appVersion) {
-        this.appVersion = appVersion;
+    public void setVersionNo(Integer versionNo) {
+        this.versionNo = versionNo;
     }
 
-    public Integer getJsVersion() {
-        return jsVersion;
+    public Integer getType() {
+        return type;
     }
 
-    public void setJsVersion(Integer jsVersion) {
-        this.jsVersion = jsVersion;
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

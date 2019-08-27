@@ -349,7 +349,7 @@ public class MainActivity extends BaseTitleCompatActivity {
 
             }
             ToastUtil.showToast(getContext(), "下载成功");
-//            installApk();
+            installApk(filePath);
         }
 
         @Override
@@ -383,7 +383,7 @@ public class MainActivity extends BaseTitleCompatActivity {
      * 安装apk
      */
 
-    private void installApk() {
+    public void installApk(String filePath) {
         File file = new File(filePath);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -394,7 +394,7 @@ public class MainActivity extends BaseTitleCompatActivity {
             // 参数1 上下文, 参数2 Provider主机地址 和清单配置文件中保持一致
             // 参数2 = android:authorities="应用包名.fileprovider"属性值
             // 参数3 = 上一步中共享的apk文件
-            Uri apkUri = FileProvider.getUriForFile(getContext(), "com.jm.video.fileprovider", file);
+            Uri apkUri = FileProvider.getUriForFile(getContext(), "com.pickcle.picklework.fileprovider", file);
             //添加这一句表示对目标应用临时授权该Uri所代表的文件
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
@@ -467,9 +467,9 @@ public class MainActivity extends BaseTitleCompatActivity {
                     ToastUtil.showToast(getContext(), "请输入邀请码");
                 } else {
                     if (feelContent.getText().toString().length() == 8) {
-                        ToastUtil.showToast(getContext(), "输入邀请码长度有误");
-                    } else {
                         loadDeviceRegister(feelContent.getText().toString(), dialog);
+                    } else {
+                        ToastUtil.showToast(getContext(), "输入邀请码长度有误");
                     }
                 }
             }

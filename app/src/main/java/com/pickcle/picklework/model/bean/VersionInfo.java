@@ -2,62 +2,46 @@ package com.pickcle.picklework.model.bean;
 
 public class VersionInfo {
     //app是否升级
-    private Integer appUpdateFlag = 0;
+    private Integer updateFlag = 0;
     //app是否强制更新
-    private Integer appForceUpate;
-    private String appVersionName;
-    private Integer appVersionCode;
-    //js是否升级
-    private Integer jsUpdateFlag = 0;
-    //js是否强制更新
-    private Integer jsForceUpate;
-    private String jsVersionName;
-    private Integer jsVersionCode;
+    private Integer forceUpate;
+    private String versionName;
+    private Integer versionNo;
     //app更新地址
-    private String appUrl;
-    //js更新地址
-    private String jsUrl;
+    private String downUrl;
     //更新内容
     private String remark;
 
-    public Integer getAppUpdateFlag() {
-        return appUpdateFlag;
+    public Integer getVersionNo() {
+        return versionNo;
     }
 
-    public void setAppUpdateFlag(Integer appUpdateFlag) {
-        this.appUpdateFlag = appUpdateFlag;
+    public void setVersionNo(Integer versionNo) {
+        this.versionNo = versionNo;
     }
 
-    public Integer getAppForceUpate() {
-        return appForceUpate;
+    public Integer getUpdateFlag() {
+        return updateFlag;
     }
 
-    public void setAppForceUpate(Integer appForceUpate) {
-        this.appForceUpate = appForceUpate;
+    public void setUpdateFlag(Integer updateFlag) {
+        this.updateFlag = updateFlag;
     }
 
-    public Integer getJsUpdateFlag() {
-        return jsUpdateFlag;
+    public Integer getForceUpate() {
+        return forceUpate;
     }
 
-    public void setJsUpdateFlag(Integer jsUpdateFlag) {
-        this.jsUpdateFlag = jsUpdateFlag;
+    public void setForceUpate(Integer forceUpate) {
+        this.forceUpate = forceUpate;
     }
 
-    public Integer getJsForceUpate() {
-        return jsForceUpate;
+    public String getDownUrl() {
+        return downUrl;
     }
 
-    public void setJsForceUpate(Integer jsForceUpate) {
-        this.jsForceUpate = jsForceUpate;
-    }
-
-    public String getAppUrl() {
-        return appUrl;
-    }
-
-    public void setAppUrl(String appUrl) {
-        this.appUrl = appUrl;
+    public void setDownUrl(String downUrl) {
+        this.downUrl = downUrl;
     }
 
     public String getRemark() {
@@ -68,43 +52,11 @@ public class VersionInfo {
         this.remark = remark;
     }
 
-    public String getJsUrl() {
-        return jsUrl;
+    public String getVersionName() {
+        return versionName;
     }
 
-    public void setJsUrl(String jsUrl) {
-        this.jsUrl = jsUrl;
-    }
-
-    public String getAppVersionName() {
-        return appVersionName;
-    }
-
-    public void setAppVersionName(String appVersionName) {
-        this.appVersionName = appVersionName;
-    }
-
-    public String getJsVersionName() {
-        return jsVersionName;
-    }
-
-    public void setJsVersionName(String jsVersionName) {
-        this.jsVersionName = jsVersionName;
-    }
-
-    public Integer getAppVersionCode() {
-        return appVersionCode;
-    }
-
-    public void setAppVersionCode(Integer appVersionCode) {
-        this.appVersionCode = appVersionCode;
-    }
-
-    public Integer getJsVersionCode() {
-        return jsVersionCode;
-    }
-
-    public void setJsVersionCode(Integer jsVersionCode) {
-        this.jsVersionCode = jsVersionCode;
+    public void setVersionName(String versionName) {
+        this.versionName = versionName;
     }
 }
