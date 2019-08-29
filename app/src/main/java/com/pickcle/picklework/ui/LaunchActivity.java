@@ -369,7 +369,6 @@ public class LaunchActivity extends RxAppActivity {
                 dialog.dismiss();
             }
             installApk();
-            handler.sendEmptyMessage(HANDLER_CODE);
         }
 
         @Override
@@ -384,6 +383,7 @@ public class LaunchActivity extends RxAppActivity {
             if (dialog != null) {
                 dialog.dismiss();
             }
+            handler.sendEmptyMessage(HANDLER_CODE);
         }
     };
 
@@ -431,7 +431,7 @@ public class LaunchActivity extends RxAppActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        doNext(requestCode, grantResults);
+        runScript();
     }
 
     private void doNext(int requestCode, int[] grantResults) {

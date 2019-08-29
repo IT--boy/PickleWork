@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -21,14 +20,14 @@ import android.widget.TextView;
 import com.justcan.library.dialog.CBDialogBuilder;
 import com.justcan.library.utils.common.AppUtil;
 import com.justcan.library.utils.common.InputUtils;
-import com.justcan.library.utils.common.PermissionPageUtils;
 import com.justcan.library.utils.common.StringUtils;
 import com.justcan.library.utils.common.ToastUtil;
 import com.pickcle.picklework.PWApplication;
+import com.pickcle.picklework.PickleWorkService;
 import com.pickcle.picklework.Pref;
 import com.pickcle.picklework.R;
 import com.pickcle.picklework.SettingsActivity;
-import com.pickcle.picklework.adapter.MainBannerAdapter;
+import com.pickcle.picklework.autojs.AutoJs;
 import com.pickcle.picklework.autojs.script.ScriptFile;
 import com.pickcle.picklework.autojs.script.Scripts;
 import com.pickcle.picklework.http.HttpManager;
@@ -42,27 +41,29 @@ import com.pickcle.picklework.model.bean.DeviceInfoResponse;
 import com.pickcle.picklework.model.bean.DeviceInfor;
 import com.pickcle.picklework.model.bean.VersionInfo;
 import com.pickcle.picklework.model.bean.VersionResponse;
+import com.pickcle.picklework.model.event.JsStopEvent;
+import com.pickcle.picklework.model.event.RefreshEvent;
 import com.pickcle.picklework.model.http.api.AppBannerListApi;
 import com.pickcle.picklework.model.http.api.AppDeviceInfoApi;
 import com.pickcle.picklework.model.http.api.AppVersionApi;
 import com.pickcle.picklework.model.http.request.BaseRequest;
 import com.pickcle.picklework.model.http.request.VersionRequest;
 import com.pickcle.picklework.util.SdcardUtils;
-import com.zhouwei.mzbanner.MZBannerView;
-import com.zhouwei.mzbanner.holder.MZHolderCreator;
+import com.stardust.autojs.engine.ScriptEngine;
 
 import java.io.File;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.Subscribe;
+import de.greenrobot.event.ThreadMode;
 
 /**
  * 主界面
  */
 public class MainWorkActivity extends BaseTitleCompatActivity {
     public static final Class<JoinActivity> CLS = JoinActivity.class;
-    @BindView(R.id.banner)
-    MZBannerView bannerView;
     @BindView(R.id.progressLoad)
     ProgressBar progressLoad;
     @BindView(R.id.noDataLayout)
@@ -70,7 +71,7 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
     @BindView(R.id.errorLayout)
     LinearLayout errorLayout;
     @BindView(R.id.contentLayout)
-    FrameLayout contentLayout;
+    LinearLayout contentLayout;
 
     @BindView(R.id.btnRightImg)
     ImageView btnSet;
@@ -80,32 +81,33 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
     @BindView(R.id.invitationCode)
     TextView invitationCode;
 
-    @BindView(R.id.workMLayout)
-    RelativeLayout workMLayout;
-    @BindView(R.id.studyMLayout)
-    RelativeLayout studyMLayout;
-
     @BindView(R.id.workLayout)
     LinearLayout workLayout;
     @BindView(R.id.btnStartWork)
     TextView btnStartWork;
-    @BindView(R.id.btnStopWork)
-    TextView btnStopWork;
     @BindView(R.id.workDate)
     TextView workDate;
     @BindView(R.id.studyLayout)
     LinearLayout studyLayout;
     @BindView(R.id.btnStartStudy)
     TextView btnStartStudy;
-    @BindView(R.id.btnStopStudy)
-    TextView btnStopStudy;
+    @BindView(R.id.btnStop)
+    TextView btnStop;
     @BindView(R.id.studyDate)
     TextView studyDate;
 
+    @BindView(R.id.gotoQrInfoWork)
+    RelativeLayout gotoQrInfoWork;
+    @BindView(R.id.gotoQrInfoStudy)
+    RelativeLayout gotoQrInfoStudy;
+
+    @BindView(R.id.line4)
+    View line4;
+    @BindView(R.id.line5)
+    View line5;
+
     @BindView(R.id.bottomLayout)
     LinearLayout bottomLayout;
-    @BindView(R.id.topLayout)
-    LinearLayout topLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -113,6 +115,7 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
         initData();
         initView();
         setData();
+        AutoJs.getInstance().getScriptEngineService().stopAllAndToast();
     }
 
     @Override
@@ -137,6 +140,8 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
 
     private void setData() {
         loadBannerList();
+        Intent service = new Intent(getContext(), PickleWorkService.class);
+        startService(service);
     }
 
     private void loadBannerList() {
@@ -160,9 +165,9 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
 
             @Override
             public void onSuccess(BannerListResponse model) {
-                if (model != null) {
+                if (model != null && model.getDeviceInfor() != null) {
                     contentLayout.setVisibility(View.VISIBLE);
-                    setData(model);
+                    setData(model.getDeviceInfor());
                 } else {
                     noDataLayout.setVisibility(View.VISIBLE);
                 }
@@ -181,47 +186,33 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
     private DeviceInfor deviceInfor;
 
     private void setData(BannerListResponse model) {
-        if (model.getBannerList() != null && model.getBannerList().size() > 0) {
-            bannerView.setVisibility(View.VISIBLE);
-            bannerView.setPages(model.getBannerList(), new MZHolderCreator<MainBannerAdapter>() {
-                @Override
-                public MainBannerAdapter createViewHolder() {
-                    return new MainBannerAdapter();
-                }
-            });
-        } else {
-            bannerView.setVisibility(View.GONE);
-        }
 
         DeviceInfor deviceInfor = model.getDeviceInfor();
-        if (deviceInfor != null) {
             this.deviceInfor = deviceInfor;
             if (deviceInfor.getWorkFlag() != null && deviceInfor.getWorkFlag() == 1) {
                 workLayout.setVisibility(View.VISIBLE);
                 btnStartWork.setVisibility(View.VISIBLE);
-                btnStopWork.setVisibility(View.GONE);
             } else {
                 workLayout.setVisibility(View.GONE);
             }
             if (deviceInfor.getStudyFlag() != null && deviceInfor.getStudyFlag() == 1) {
                 studyLayout.setVisibility(View.VISIBLE);
                 btnStartStudy.setVisibility(View.VISIBLE);
-                btnStopStudy.setVisibility(View.GONE);
             } else {
                 studyLayout.setVisibility(View.GONE);
             }
             if (deviceInfor.getType() != null && deviceInfor.getType() == 1) {
-                workMLayout.setVisibility(View.VISIBLE);
-                studyMLayout.setVisibility(View.GONE);
+                gotoQrInfoWork.setVisibility(View.VISIBLE);
+                gotoQrInfoStudy.setVisibility(View.GONE);
                 studyLayout.setVisibility(View.GONE);
             } else {
                 if (deviceInfor.getType() != null && deviceInfor.getType() == 2) {
-                    workMLayout.setVisibility(View.GONE);
-                    studyMLayout.setVisibility(View.VISIBLE);
+                    gotoQrInfoWork.setVisibility(View.GONE);
+                    gotoQrInfoStudy.setVisibility(View.VISIBLE);
                     workLayout.setVisibility(View.GONE);
                 } else {
-                    workMLayout.setVisibility(View.VISIBLE);
-                    studyMLayout.setVisibility(View.VISIBLE);
+                    gotoQrInfoWork.setVisibility(View.VISIBLE);
+                    gotoQrInfoStudy.setVisibility(View.VISIBLE);
                 }
             }
             if (!StringUtils.isEmpty(deviceInfor.getWorkExpiryDate())) {
@@ -239,10 +230,6 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
             } else {
                 invitationCode.setText("邀请码：无");
             }
-        } else {
-            topLayout.setVisibility(View.GONE);
-            bottomLayout.setVisibility(View.GONE);
-        }
     }
 
     private void loadDeviceInfo() {
@@ -253,8 +240,8 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
 
             @Override
             public void onSuccess(DeviceInfoResponse model) {
-                if (model != null) {
-                    setData(model);
+                if (model != null && model.getDeviceInfor() != null) {
+                    setData(model.getDeviceInfor());
                 } else {
                 }
             }
@@ -264,57 +251,61 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
         httpManager.doHttpDealF(api);
     }
 
-    private void setData(DeviceInfoResponse model) {
-        DeviceInfor deviceInfor = model.getDeviceInfor();
-        if (deviceInfor != null) {
-            this.deviceInfor = deviceInfor;
-            if (deviceInfor.getWorkFlag() != null && deviceInfor.getWorkFlag() == 1) {
-                workLayout.setVisibility(View.VISIBLE);
-                btnStartWork.setVisibility(View.VISIBLE);
-                btnStopWork.setVisibility(View.GONE);
-            } else {
-                workLayout.setVisibility(View.GONE);
-            }
-            if (deviceInfor.getStudyFlag() != null && deviceInfor.getStudyFlag() == 1) {
-                studyLayout.setVisibility(View.VISIBLE);
-                btnStartStudy.setVisibility(View.VISIBLE);
-                btnStopStudy.setVisibility(View.GONE);
-            } else {
-                studyLayout.setVisibility(View.GONE);
-            }
-            if (deviceInfor.getType() != null && deviceInfor.getType() == 1) {
-                workMLayout.setVisibility(View.VISIBLE);
-                studyMLayout.setVisibility(View.GONE);
-                studyLayout.setVisibility(View.GONE);
-            } else {
-                if (deviceInfor.getType() != null && deviceInfor.getType() == 2) {
-                    workMLayout.setVisibility(View.GONE);
-                    studyMLayout.setVisibility(View.VISIBLE);
-                    workLayout.setVisibility(View.GONE);
-                } else {
-                    workMLayout.setVisibility(View.VISIBLE);
-                    studyMLayout.setVisibility(View.VISIBLE);
-                }
-
-            }
-            if (!StringUtils.isEmpty(deviceInfor.getWorkExpiryDate())) {
-                workDate.setText("有效期：" + deviceInfor.getWorkExpiryDate());
-            } else {
-                workDate.setText("无效");
-            }
-            if (!StringUtils.isEmpty(deviceInfor.getStudyExpiryDate())) {
-                studyDate.setText("有效期：" + deviceInfor.getStudyExpiryDate());
-            } else {
-                studyDate.setText("无效");
-            }
-            if (!StringUtils.isEmpty(deviceInfor.getInvitationCode())) {
-                invitationCode.setText("邀请码：" + deviceInfor.getInvitationCode());
-            } else {
-                invitationCode.setText("邀请码：无");
-            }
+    private void setData(DeviceInfor deviceInfor) {
+        this.deviceInfor = deviceInfor;
+        if (deviceInfor.getWorkFlag() != null && deviceInfor.getWorkFlag() == 1) {
+            workLayout.setVisibility(View.VISIBLE);
+            btnStartWork.setVisibility(View.VISIBLE);
         } else {
-            topLayout.setVisibility(View.GONE);
+            workLayout.setVisibility(View.GONE);
+        }
+        if (deviceInfor.getStudyFlag() != null && deviceInfor.getStudyFlag() == 1) {
+            studyLayout.setVisibility(View.VISIBLE);
+            btnStartStudy.setVisibility(View.VISIBLE);
+        } else {
+            studyLayout.setVisibility(View.GONE);
+        }
+        if (deviceInfor.getWorkFlag() != null && deviceInfor.getWorkFlag() == 0 && deviceInfor.getStudyFlag() != null && deviceInfor.getStudyFlag() == 0) {
+            AutoJs.getInstance().getScriptEngineService().stopAllAndToast();
+        }
+
+        Set<ScriptEngine> engines = AutoJs.getInstance().getScriptEngineService().getEngines();
+        if (engines != null && engines.size() > 0) {
             bottomLayout.setVisibility(View.GONE);
+            btnStop.setVisibility(View.VISIBLE);
+        } else {
+            bottomLayout.setVisibility(View.VISIBLE);
+            btnStop.setVisibility(View.GONE);
+        }
+        if (deviceInfor.getType() != null && deviceInfor.getType() == 1) {
+            gotoQrInfoWork.setVisibility(View.VISIBLE);
+            gotoQrInfoStudy.setVisibility(View.GONE);
+            studyLayout.setVisibility(View.GONE);
+        } else {
+            if (deviceInfor.getType() != null && deviceInfor.getType() == 2) {
+                gotoQrInfoWork.setVisibility(View.GONE);
+                gotoQrInfoStudy.setVisibility(View.VISIBLE);
+                workLayout.setVisibility(View.GONE);
+            } else {
+                gotoQrInfoWork.setVisibility(View.VISIBLE);
+                gotoQrInfoStudy.setVisibility(View.VISIBLE);
+            }
+
+        }
+        if (!StringUtils.isEmpty(deviceInfor.getWorkExpiryDate())) {
+            workDate.setText("有效期：" + deviceInfor.getWorkExpiryDate());
+        } else {
+            workDate.setText("无效");
+        }
+        if (!StringUtils.isEmpty(deviceInfor.getStudyExpiryDate())) {
+            studyDate.setText("有效期：" + deviceInfor.getStudyExpiryDate());
+        } else {
+            studyDate.setText("无效");
+        }
+        if (!StringUtils.isEmpty(deviceInfor.getInvitationCode())) {
+            invitationCode.setText("邀请码：" + deviceInfor.getInvitationCode());
+        } else {
+            invitationCode.setText("邀请码：无");
         }
     }
 
@@ -352,6 +343,12 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
 
     }
 
+    //个人信息
+    @OnClick(R.id.gotoInfo)
+    public void gotoInfo(View view) {
+        ToastUtil.showToast(getContext(), "敬请期待");
+    }
+
     //订单列表
     @OnClick(R.id.gotoOrder)
     public void gotoOrder(View view) {
@@ -378,7 +375,8 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
     //权限设置
     @OnClick(R.id.gotoPer)
     public void gotoPer(View view) {
-        PermissionPageUtils.getIntence(getContext()).jumpPermissionPage();
+        Intent gotoPer = new Intent(getContext(), PermissionSettingActivity.class);
+        startActivity(gotoPer);
     }
 
     //文字教程
@@ -404,24 +402,32 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
 
     }
 
-    //停止打工
-    @OnClick(R.id.btnStopWork)
-    public void btnStopWork(View view) {
-
-    }
-
     //开始学习
     @OnClick(R.id.btnStartStudy)
     public void btnStartStudy(View view) {
         loadUpdateInfo(3);
     }
 
-    //停止学习
-    @OnClick(R.id.btnStopStudy)
+    //停止
+    @OnClick(R.id.btnStop)
     public void btnStopStudy(View view) {
-
+        AutoJs.getInstance().getScriptEngineService().stopAllAndToast();
+        if (deviceInfor != null) {
+            setData(deviceInfor);
+        }
     }
 
+    @Subscribe(threadMode = ThreadMode.MainThread)
+    public void jsStopEvent(JsStopEvent jsStopEvent) {
+        if (deviceInfor != null) {
+            setData(deviceInfor);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MainThread)
+    public void refreshEvent(RefreshEvent refreshEvent) {
+        loadDeviceInfo();
+    }
     private void loadUpdateInfo(Integer type) {
         VersionRequest request = new VersionRequest();
         if (type == 2) {
@@ -448,9 +454,9 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
                         filePath = SdcardUtils.sdPath + "pickle_work/pw_js_" + model.getVersionInfo().getVersionName() + ".js";
                         File file = new File(filePath);
                         if (model.getVersionInfo().getUpdateFlag() == 1 || !file.exists()) {
-                            showDownloadDialog(model.getVersionInfo());
+                            showDownloadDialog(model.getVersionInfo(), type);
                         } else {
-                            runScript();
+                            runScript(type);
                         }
                     } else {
                         ToastUtil.showToast(getContext(), "数据异常");
@@ -479,7 +485,7 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
     private TextView content;
     private Dialog dialog;
 
-    private void showDownloadDialog(final VersionInfo update) {
+    private void showDownloadDialog(final VersionInfo update, int type) {
         final CBDialogBuilder builder = new CBDialogBuilder(this);
         builder.setDialogAnimation(CBDialogBuilder.DIALOG_ANIM_SLID_BOTTOM);
         builder.setTouchOutSideCancelable(false);
@@ -505,7 +511,7 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
                 return false;
             }
         });
-        downloadApk(update);
+        downloadApk(update, type);
 
     }
 
@@ -514,25 +520,28 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
      */
     private String filePath;
 
-    private void downloadApk(final VersionInfo update) {
+    private void downloadApk(final VersionInfo update, int type) {
         filePath = SdcardUtils.sdPath + "pickle_work/pw_js_" + update.getVersionName() + ".js";
         File file = new File(filePath);
         DownInfo downInfo = new DownInfo(PWApplication.getRequestUrl() + update.getDownUrl());
         downInfo.setSavePath(file.getAbsolutePath());
         downInfo.setState(DownState.START);
         downInfo.setListener(httpDownOnNextListener);
+        downInfo.setType(type);
 
         HttpDownManager.getInstance().startDown(downInfo);
     }
 
-    private void runScript() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ScriptFile scriptFile = new ScriptFile(filePath);
-                Scripts.run(scriptFile);
-            }
-        }).start();
+    private void runScript(int type) {
+        if (type == 2) {
+            btnStop.setVisibility(View.VISIBLE);
+            bottomLayout.setVisibility(View.GONE);
+        } else if (type == 3) {
+            btnStop.setVisibility(View.VISIBLE);
+            bottomLayout.setVisibility(View.GONE);
+        }
+        ScriptFile scriptFile = new ScriptFile(filePath);
+        Scripts.run(scriptFile);
 
     }
 
@@ -545,7 +554,7 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
             if (dialog != null) {
                 dialog.dismiss();
             }
-            runScript();
+            runScript(downInfo.getType());
         }
 
         @Override

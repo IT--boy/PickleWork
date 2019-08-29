@@ -35,6 +35,7 @@ public class PWApplication extends Application {
     public void onCreate() {
         super.onCreate();
         initThinker();
+
         context = getApplicationContext();
 
         SdcardUtils.initSdcardFolders(getContext());
@@ -55,6 +56,7 @@ public class PWApplication extends Application {
                 .setPatchRestartOnSrceenOff(true)
                 .setFetchPatchIntervalByHours(3);
 
+        TinkerPatch.with().fetchPatchUpdate(true);
         // 每隔3个小时(通过setFetchPatchIntervalByHours设置)去访问后台时候有更新,通过handler实现轮训的效果
         TinkerPatch.with().fetchPatchUpdateAndPollWithInterval();
     }

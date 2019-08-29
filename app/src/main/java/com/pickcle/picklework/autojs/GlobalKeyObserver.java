@@ -4,12 +4,14 @@ import android.util.Log;
 import android.view.KeyEvent;
 
 import com.pickcle.picklework.Pref;
+import com.pickcle.picklework.model.event.JsStopEvent;
 import com.stardust.app.GlobalAppContext;
-
 import com.stardust.autojs.core.inputevent.InputEventObserver;
 import com.stardust.autojs.core.inputevent.ShellKeyObserver;
 import com.stardust.view.accessibility.AccessibilityService;
 import com.stardust.view.accessibility.OnKeyListener;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Stardust on 2017/8/14.
@@ -24,8 +26,7 @@ public class GlobalKeyObserver implements OnKeyListener, ShellKeyObserver.KeyLis
     private boolean mVolumeUpFromShell, mVolumeUpFromAccessibility;
 
     GlobalKeyObserver() {
-        AccessibilityService.getStickOnKeyObserver()
-                .addListener(this);
+        AccessibilityService.getStickOnKeyObserver().addListener(this);
         ShellKeyObserver observer = new ShellKeyObserver();
         observer.setKeyListener(this);
         InputEventObserver.getGlobal(GlobalAppContext.get()).addListener(observer);
@@ -38,6 +39,7 @@ public class GlobalKeyObserver implements OnKeyListener, ShellKeyObserver.KeyLis
     public void onVolumeUp() {
         Log.d(LOG_TAG, "onVolumeUp at " + System.currentTimeMillis());
         if (Pref.shouldStopAllScriptsWhenVolumeUp()) {
+            EventBus.getDefault().post(new JsStopEvent());
             AutoJs.getInstance().getScriptEngineService().stopAllAndToast();
         }
     }

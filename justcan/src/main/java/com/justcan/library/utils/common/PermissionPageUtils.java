@@ -130,20 +130,27 @@ public class PermissionPageUtils {
     }
 
     private void goXiaoMiMainager() {
-        String rom = getMiuiVersion();
-        Intent intent = new Intent();
-        if ("V6".equals(rom) || "V7".equals(rom)) {
-            intent.setAction("miui.intent.action.APP_PERM_EDITOR");
-            intent.setClassName("com.miui.securitycenter", "com.miui.permcenter.permissions.AppPermissionsEditorActivity");
-            intent.putExtra("extra_pkgname", packageName);
-        } else if ("V8".equals(rom) || "V9".equals(rom)) {
-            intent.setAction("miui.intent.action.APP_PERM_EDITOR");
-            intent.setClassName("com.miui.securitycenter", "com.miui.permcenter.permissions.PermissionsEditorActivity");
-            intent.putExtra("extra_pkgname", packageName);
-        } else {
+        try {
+            String rom = getMiuiVersion();
+            Intent intent = new Intent();
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if ("V6".equals(rom) || "V7".equals(rom)) {
+                intent.setAction("miui.intent.action.APP_PERM_EDITOR");
+                intent.setClassName("com.miui.securitycenter", "com.miui.permcenter.permissions.AppPermissionsEditorActivity");
+                intent.putExtra("extra_pkgname", packageName);
+            } else if ("V8".equals(rom) || "V9".equals(rom)) {
+                intent.setAction("miui.intent.action.APP_PERM_EDITOR");
+                intent.setClassName("com.miui.securitycenter", "com.miui.permcenter.permissions.PermissionsEditorActivity");
+                intent.putExtra("extra_pkgname", packageName);
+            } else {
+                goIntentSetting();
+            }
+            mContext.startActivity(intent);
+        } catch (Exception exception) {
+            exception.printStackTrace();
             goIntentSetting();
         }
-        mContext.startActivity(intent);
+
     }
 
     private void goMeizuMainager() {
@@ -152,8 +159,8 @@ public class PermissionPageUtils {
             intent.addCategory(Intent.CATEGORY_DEFAULT);
             intent.putExtra("packageName", packageName);
             mContext.startActivity(intent);
-        } catch (ActivityNotFoundException localActivityNotFoundException) {
-            localActivityNotFoundException.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
             goIntentSetting();
         }
     }
