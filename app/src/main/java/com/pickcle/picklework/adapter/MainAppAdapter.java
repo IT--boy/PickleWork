@@ -74,7 +74,8 @@ public class MainAppAdapter extends BaseAdapter {
 
         if (AppUtil.checkAppInstalled(context, appInfor.getAppPackageName())) {
             btnOpen.setVisibility(View.GONE);
-            btnDownload.setVisibility(View.GONE);
+            btnDownload.setVisibility(View.VISIBLE);
+            btnDownload.setText("更新");
         } else {
             if (new File(filePath).exists()) {
                 btnOpen.setVisibility(View.VISIBLE);
@@ -82,6 +83,7 @@ public class MainAppAdapter extends BaseAdapter {
             } else {
                 btnOpen.setVisibility(View.GONE);
                 btnDownload.setVisibility(View.VISIBLE);
+                btnDownload.setText("下载");
             }
 
         }

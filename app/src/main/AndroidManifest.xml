@@ -84,6 +84,9 @@
         <activity android:name="com.pickcle.picklework.ui.JoinActivity">
 
         </activity>
+        <activity android:name="com.pickcle.picklework.ui.BannerInfoActivity">
+
+        </activity>
         <activity android:name="com.pickcle.picklework.ui.PermissionSettingActivity">
 
         </activity>

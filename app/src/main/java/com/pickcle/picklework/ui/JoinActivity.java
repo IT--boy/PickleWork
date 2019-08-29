@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.pickcle.picklework.R;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 /**
  * 代理推广界面
@@ -158,5 +159,10 @@ public class JoinActivity extends BaseTitleCompatActivity {
     @Override
     public int getLayoutId() {
         return R.layout.activity_course_layout;
+    }
+
+    @OnClick(R.id.btnRetryLoad)
+    public void btnRetryLoad(View view) {
+        webView.loadUrl("https://www.baidu.com/");
     }
 }

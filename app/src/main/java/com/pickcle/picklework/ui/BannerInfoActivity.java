@@ -14,15 +14,17 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.justcan.library.utils.common.StringUtils;
 import com.pickcle.picklework.R;
+import com.pickcle.picklework.model.bean.BannerInfo;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
- * 教程界面
+ * 广告栏界面
  */
-public class CourseActivity extends BaseTitleCompatActivity {
+public class BannerInfoActivity extends BaseTitleCompatActivity {
     @BindView(R.id.progressLoad)
     ProgressBar progressLoad;
     @BindView(R.id.noDataLayout)
@@ -33,6 +35,8 @@ public class CourseActivity extends BaseTitleCompatActivity {
     FrameLayout contentLayout;
 
     private WebView webView;
+
+    private BannerInfo bannerInfo;
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,14 +80,16 @@ public class CourseActivity extends BaseTitleCompatActivity {
     }
 
     private void initData() {
-
+        bannerInfo = (BannerInfo) getIntent().getSerializableExtra("data");
     }
 
     private boolean isShowFail = false;
 
     private void initView() {
         setBackView();
-        setTitleText("打工文字教程");
+        if (bannerInfo != null) {
+            setTitleText(bannerInfo.getTitle());
+        }
         webView = new WebView(getApplicationContext());
         contentLayout.addView(webView);
 
@@ -148,8 +154,9 @@ public class CourseActivity extends BaseTitleCompatActivity {
                 errorLayout.setVisibility(View.VISIBLE);
             }
         });
-
-        webView.loadUrl("https://www.baidu.com/");
+        if (bannerInfo != null && !StringUtils.isEmpty(bannerInfo.getUrl())) {
+            webView.loadUrl(bannerInfo.getUrl());
+        }
     }
 
     private void setData() {
@@ -162,6 +169,8 @@ public class CourseActivity extends BaseTitleCompatActivity {
     }
     @OnClick(R.id.btnRetryLoad)
     public void btnRetryLoad(View view) {
-        webView.loadUrl("https://www.baidu.com/");
+        if (bannerInfo != null && !StringUtils.isEmpty(bannerInfo.getUrl())) {
+            webView.loadUrl(bannerInfo.getUrl());
+        }
     }
 }

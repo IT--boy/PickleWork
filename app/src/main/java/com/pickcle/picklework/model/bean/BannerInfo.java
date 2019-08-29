@@ -1,6 +1,8 @@
 package com.pickcle.picklework.model.bean;
 
-public class BannerInfo {
+import java.io.Serializable;
+
+public class BannerInfo implements Serializable {
     //展示图地址
     private String picUrl;
     //标题内容
