@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.justcan.library.utils.common.PermissionPageUtils;
+import com.pickcle.picklework.LogActivity;
 import com.pickcle.picklework.R;
 import com.pickcle.picklework.autojs.AccessibilityServiceTool;
 
@@ -57,6 +58,12 @@ public class PermissionSettingActivity extends BaseTitleCompatActivity {
     @OnClick(R.id.gotoPermission4)
     public void gotoPermission4(View view) {
         AccessibilityServiceTool.goToAccessibilitySetting();
+    }
+
+    @OnClick(R.id.gotoLog)
+    public void gotoLog(View view) {
+        Intent gotoLog = new Intent(getContext(), LogActivity.class);
+        startActivity(gotoLog);
     }
 
     @Override

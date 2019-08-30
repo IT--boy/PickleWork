@@ -40,6 +40,7 @@ public class OrderListActivity extends BaseTitleCompatActivity {
     ListView listView;
 
     private OrderAdapter adapter;
+    private OrderListResponse response;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -96,9 +97,12 @@ public class OrderListActivity extends BaseTitleCompatActivity {
             @Override
             public void onStart() {
                 super.onStart();
-                refreshLayout.setVisibility(View.GONE);
-                errorLayout.setVisibility(View.GONE);
-                progressLoad.setVisibility(View.VISIBLE);
+                if (response == null) {
+                    refreshLayout.setVisibility(View.GONE);
+                    errorLayout.setVisibility(View.GONE);
+                    progressLoad.setVisibility(View.VISIBLE);
+                }
+
             }
 
             @Override
@@ -111,6 +115,7 @@ public class OrderListActivity extends BaseTitleCompatActivity {
             @Override
             public void onSuccess(OrderListResponse model) {
                 if (model != null && model.getTotalSize() != 0) {
+                    response = model;
                     refreshLayout.setVisibility(View.VISIBLE);
                     setData(model);
                 } else {
@@ -122,7 +127,9 @@ public class OrderListActivity extends BaseTitleCompatActivity {
             @Override
             public void onError(String message) {
                 super.onError(message);
-                errorLayout.setVisibility(View.VISIBLE);
+                if (response == null) {
+                    errorLayout.setVisibility(View.VISIBLE);
+                }
             }
         }, this);
         api.addRequstBody(request);
