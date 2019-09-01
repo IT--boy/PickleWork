@@ -27,6 +27,8 @@ import com.justcan.library.utils.common.AppUtil;
 import com.justcan.library.utils.common.InputUtils;
 import com.justcan.library.utils.common.StringUtils;
 import com.justcan.library.utils.common.ToastUtil;
+import com.justcan.library.utils.permissions.PermissionsManager;
+import com.justcan.library.utils.permissions.PermissionsResultAction;
 import com.pickcle.picklework.PWApplication;
 import com.pickcle.picklework.Pref;
 import com.pickcle.picklework.R;
@@ -73,7 +75,7 @@ public class LaunchActivity extends RxAppActivity {
         EventBus.getDefault().register(this);
 
         if (!Pref.isFirstUsing()) {
-            main();
+            getPermissions();
             return;
         }
 
@@ -90,6 +92,19 @@ public class LaunchActivity extends RxAppActivity {
         loadUpdateInfo();
     }
 
+    private void getPermissions() {
+        PermissionsManager.getInstance().requestAllManifestPermissionsIfNecessary(this, new PermissionsResultAction() {
+            @Override
+            public void onGranted() {
+
+            }
+
+            @Override
+            public void onDenied(String permission) {
+
+            }
+        });
+    }
     protected void checkPermission(String... permissions) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             String[] requestPermissions = getRequestPermissions(permissions);
@@ -192,7 +207,7 @@ public class LaunchActivity extends RxAppActivity {
         request.setType(1);
         String deviceNo = AppUtil.getDeviceNo(getBaseContext());
         if (StringUtils.isEmpty(deviceNo)) {
-            main();
+            getPermissions();
             return;
         } else {
             request.setDeviceNo(deviceNo);
@@ -351,7 +366,13 @@ public class LaunchActivity extends RxAppActivity {
     private void downloadApk(final VersionInfo update) {
         filePath = SdcardUtils.sdPath + "pickle_work/pw_app_" + update.getVersionName() + ".apk";
         File file = new File(filePath);
-        DownInfo downInfo = new DownInfo(PWApplication.getRequestUrl() + update.getDownUrl());
+        DownInfo downInfo = null;
+        if (update.getDownUrl().contains("http")) {
+            downInfo = new DownInfo(update.getDownUrl());
+        } else {
+            downInfo = new DownInfo(PWApplication.getRequestUrl() + update.getDownUrl());
+        }
+
         downInfo.setSavePath(file.getAbsolutePath());
         downInfo.setState(DownState.START);
         downInfo.setListener(httpDownOnNextListener);

@@ -453,6 +453,7 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
                         }
                         filePath = SdcardUtils.sdPath + "pickle_work/pw_js_" + model.getVersionInfo().getVersionName() + ".js";
                         File file = new File(filePath);
+
                         if (model.getVersionInfo().getUpdateFlag() == 1 || !file.exists()) {
                             showDownloadDialog(model.getVersionInfo(), type);
                         } else {

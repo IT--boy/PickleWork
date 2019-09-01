@@ -77,15 +77,9 @@ public class MainAppAdapter extends BaseAdapter {
             btnDownload.setVisibility(View.VISIBLE);
             btnDownload.setText("更新");
         } else {
-            if (new File(filePath).exists()) {
-                btnOpen.setVisibility(View.VISIBLE);
-                btnDownload.setVisibility(View.GONE);
-            } else {
-                btnOpen.setVisibility(View.GONE);
-                btnDownload.setVisibility(View.VISIBLE);
-                btnDownload.setText("下载");
-            }
-
+            btnOpen.setVisibility(View.GONE);
+            btnDownload.setVisibility(View.VISIBLE);
+            btnDownload.setText("下载");
         }
         btnDownload.setOnClickListener(new View.OnClickListener() {
             @Override

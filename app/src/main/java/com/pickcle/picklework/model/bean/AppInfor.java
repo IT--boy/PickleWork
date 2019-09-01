@@ -21,6 +21,8 @@ public class AppInfor {
     private String remark;
     //是否推荐
     private Integer recommendFlag;
+    //外接下载地址
+    private String appDownUrlQuick;
 
     public String getAppName() {
         return appName;
@@ -100,5 +102,13 @@ public class AppInfor {
 
     public void setRecommendFlag(Integer recommendFlag) {
         this.recommendFlag = recommendFlag;
+    }
+
+    public String getAppDownUrlQuick() {
+        return appDownUrlQuick;
+    }
+
+    public void setAppDownUrlQuick(String appDownUrlQuick) {
+        this.appDownUrlQuick = appDownUrlQuick;
     }
 }

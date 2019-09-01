@@ -60,6 +60,11 @@ public class PermissionSettingActivity extends BaseTitleCompatActivity {
         AccessibilityServiceTool.goToAccessibilitySetting();
     }
 
+    @OnClick(R.id.gotoPermission5)
+    public void gotoPermission5(View view) {
+        PermissionPageUtils.getIntence(getContext()).associationStart();
+    }
+
     @OnClick(R.id.gotoLog)
     public void gotoLog(View view) {
         Intent gotoLog = new Intent(getContext(), LogActivity.class);

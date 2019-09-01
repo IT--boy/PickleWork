@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.justcan.library.RxRetrofitApp;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.pickcle.picklework.autojs.AutoJs;
 import com.pickcle.picklework.autojs.GlobalKeyObserver;
 import com.pickcle.picklework.model.http.service.HttpConstants;
@@ -62,6 +63,8 @@ public class PWApplication extends Application {
     }
 
     private void initLibs() {
+        PgyCrashManager.register(this);
+
         x.Ext.init(this);
         GlobalAppContext.set(this);
         AutoJs.initInstance(this);

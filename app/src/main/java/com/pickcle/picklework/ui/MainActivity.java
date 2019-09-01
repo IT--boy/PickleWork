@@ -327,7 +327,12 @@ public class MainActivity extends BaseTitleCompatActivity {
     private void downloadApk(final AppInfor appInfor) {
         filePath = SdcardUtils.sdPath + "app_run/" + appInfor.getAppName() + ".apk";
         File file = new File(filePath);
-        DownInfo downInfo = new DownInfo(PWApplication.getRequestUrl() + appInfor.getAppDownUrl());
+        DownInfo downInfo = null;
+        if (!StringUtils.isEmpty(appInfor.getAppDownUrlQuick())) {
+            downInfo = new DownInfo(appInfor.getAppDownUrlQuick());
+        } else {
+            downInfo = new DownInfo(PWApplication.getRequestUrl() + appInfor.getAppDownUrl());
+        }
         downInfo.setSavePath(file.getAbsolutePath());
         downInfo.setState(DownState.START);
         downInfo.setListener(httpDownOnNextListener);

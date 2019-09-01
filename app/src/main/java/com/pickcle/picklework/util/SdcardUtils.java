@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
  * Note:Sd卡操作工具类
  */
 public class SdcardUtils {
-    private static String FILE_NAME = "pw";
+    private static String FILE_NAME = "pickle_work";
     public static final String NO_FIND_EXT_SDCARD_ROOT_PATH = "noFindExtSdcardRootPath";
     /**
      * 闹钟路径
@@ -61,16 +61,12 @@ public class SdcardUtils {
      */
     public static void initSdcardFolders( Context context) {
         File file;
-        File musicFile;
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             file = new File(Environment.getExternalStorageDirectory(), "");
-            musicFile = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
         } else if (Build.MODEL.equals("ZTE U930HD")) {
             file = new File("/mnt/sdcard2");
-            musicFile = null;
         } else {
             file = context.getFilesDir();
-            musicFile = null;
         }
         SdcardUtils.packageHaPath = context.getFilesDir() + "/" + FILE_NAME + File.separator;
         SdcardUtils.pwPath = file.toString() + "/" + FILE_NAME + "/";
@@ -79,7 +75,6 @@ public class SdcardUtils {
             shmsFile.mkdirs();
         }
         SdcardUtils.sdPath = file.toString() + "/";
-        String string = musicFile == null ? SdcardUtils.pwPath + ".music/" : musicFile.toString() + "/";
         SdcardUtils.cachePath = SdcardUtils.pwPath + "cache/";
         SdcardUtils.stickerPath = SdcardUtils.pwPath + ".stickerSvg/";
         SdcardUtils.alarmPath = SdcardUtils.pwPath + "alarm/";

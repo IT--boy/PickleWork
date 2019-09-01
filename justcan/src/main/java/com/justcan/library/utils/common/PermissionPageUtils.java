@@ -1,6 +1,5 @@
 package com.justcan.library.utils.common;
 
-import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -265,4 +264,28 @@ public class PermissionPageUtils {
         }
     }
 
+    /**
+     * 跳转关联启动页面
+     */
+    public void associationStart() {
+        try {
+            Intent startIntent = new Intent();
+            startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            ComponentName componentName = null;
+            String brand = Build.BRAND;
+            if (brand.contains("nubia")) {
+                //适配努比亚打不开QQ音乐的问题，需要开启自启动权限
+                componentName = new ComponentName("cn.nubia.security2",
+                        "cn.nubia.security.appmanage.selfstart.ui.SelfStartActivity");
+            } else if (brand.contains("vivo")) {
+                //适配vivo Xplay6半屏打不开QQ音乐的问题，需要开启关联启动权限
+                componentName = new ComponentName("com.vivo.appfilter",
+                        "com.vivo.appfilter.activity.StartupManagerActivityRom30");
+            }
+            startIntent.setComponent(componentName);
+            mContext.startActivity(startIntent);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+    }
 }

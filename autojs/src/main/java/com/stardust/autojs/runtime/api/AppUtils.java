@@ -7,9 +7,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
-import android.webkit.MimeTypeMap;
 
 import com.stardust.autojs.annotation.ScriptInterface;
 import com.stardust.util.IntentUtil;
@@ -17,8 +15,6 @@ import com.stardust.util.MimeTypes;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-
-import static com.stardust.pio.PFiles.getExtension;
 
 /**
  * Created by Stardust on 2017/4/2.
@@ -36,11 +32,13 @@ public class AppUtils {
     @ScriptInterface
     public boolean launchPackage(String packageName) {
         try {
+            Log.e("launchPackage--->", packageName);
             PackageManager packageManager = mContext.getPackageManager();
             mContext.startActivity(packageManager.getLaunchIntentForPackage(packageName)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
 

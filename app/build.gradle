@@ -93,5 +93,7 @@ dependencies {
 
     compileOnly("com.tinkerpatch.tinker:tinker-android-anno:1.9.13.3")
     implementation("com.tinkerpatch.sdk:tinkerpatch-android-sdk:1.2.13.3")
+
+    implementation files('libs/pgyer_sdk_2.4.4.jar')
 }
 apply from: 'tinkerpatch.gradle'

@@ -108,7 +108,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-
+        <!--蒲公英-->
+        <meta-data
+            android:name="PGYER_APPID"
+            android:value="8e0cfb61fafccd0b04825bd4afdad873"></meta-data>
     </application>
 
 </manifest>

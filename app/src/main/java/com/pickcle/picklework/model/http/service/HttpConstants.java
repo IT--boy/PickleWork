@@ -7,7 +7,7 @@ package com.pickcle.picklework.model.http.service;
 
 public class HttpConstants {
     public static final String RELEASE_URL = "http://154.209.4.20:80/";
-    public static final String TEST_URL = "http://192.168.1.104:80/";      //旧测试环境
+    public static final String TEST_URL = "http://192.168.1.7:80/";      //旧测试环境
 
 
     /**

@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.pgyersdk.crash.PgyCrashManager;
+import com.pickcle.picklework.PWApplication;
 import com.pickcle.picklework.http.HttpManager;
 import com.pickcle.picklework.model.event.EmptyEvent;
 import com.justcan.library.activity.RxFragmentActivity;
@@ -47,6 +49,7 @@ public abstract class BaseCompatActivity extends RxFragmentActivity {
         ButterKnife.bind(this);
 
         EventBus.getDefault().register(this);
+        PgyCrashManager.register(PWApplication.getContext());
 
         context = this;
     }
@@ -64,6 +67,7 @@ public abstract class BaseCompatActivity extends RxFragmentActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        PgyCrashManager.unregister();
     }
 
     public abstract int getContentViewId();
