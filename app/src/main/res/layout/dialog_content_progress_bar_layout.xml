@@ -28,7 +28,7 @@
             android:layout_height="4dp"
             android:layout_marginBottom="32dp"
             android:layout_marginLeft="12dp"
-            android:progress="30"
+            android:progress="0"
             android:layout_marginRight="12dp"
             android:background="@drawable/dialog_progress_bg"
             android:progressDrawable="@drawable/dialog_progress_style" />

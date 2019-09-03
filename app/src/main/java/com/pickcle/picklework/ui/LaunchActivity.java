@@ -293,7 +293,11 @@ public class LaunchActivity extends RxAppActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                showDownloadDialog(update);
+                if (update.getDownUrl().contains("http")) {
+                    openBrowser(update.getDownUrl());
+                } else {
+                    showDownloadDialog(update);
+                }
             }
         });
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -368,16 +372,17 @@ public class LaunchActivity extends RxAppActivity {
         File file = new File(filePath);
         DownInfo downInfo = null;
         if (update.getDownUrl().contains("http")) {
-            downInfo = new DownInfo(update.getDownUrl());
+            openBrowser(update.getDownUrl());
         } else {
             downInfo = new DownInfo(PWApplication.getRequestUrl() + update.getDownUrl());
+
+            downInfo.setSavePath(file.getAbsolutePath());
+            downInfo.setState(DownState.START);
+            downInfo.setListener(httpDownOnNextListener);
+
+            HttpDownManager.getInstance().startDown(downInfo);
         }
 
-        downInfo.setSavePath(file.getAbsolutePath());
-        downInfo.setState(DownState.START);
-        downInfo.setListener(httpDownOnNextListener);
-
-        HttpDownManager.getInstance().startDown(downInfo);
     }
 
     /**
@@ -445,6 +450,11 @@ public class LaunchActivity extends RxAppActivity {
         startActivity(intent);
     }
 
+    private void openBrowser(String url) {
+        Uri uri = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+    }
 
     /**
      * 选择结果接收
