@@ -44,6 +44,7 @@ import com.pickcle.picklework.model.bean.VersionResponse;
 import com.pickcle.picklework.model.event.EmptyEvent;
 import com.pickcle.picklework.model.http.api.AppVersionApi;
 import com.pickcle.picklework.model.http.request.VersionRequest;
+import com.pickcle.picklework.util.LogUtil;
 import com.pickcle.picklework.util.SdcardUtils;
 
 import java.io.File;
@@ -74,7 +75,8 @@ public class LaunchActivity extends RxAppActivity {
         setContentView(R.layout.account_launch_layout);
         EventBus.getDefault().register(this);
 
-        if (!Pref.isFirstUsing()) {
+        LogUtil.e("----->", "判断：" + Pref.isFirstUsing());
+        if (Pref.isFirstUsing()) {
             getPermissions();
             return;
         }
@@ -295,6 +297,7 @@ public class LaunchActivity extends RxAppActivity {
                 dialog.dismiss();
                 if (update.getDownUrl().contains("http")) {
                     openBrowser(update.getDownUrl());
+                    finish();
                 } else {
                     showDownloadDialog(update);
                 }
@@ -395,6 +398,7 @@ public class LaunchActivity extends RxAppActivity {
                 dialog.dismiss();
             }
             installApk();
+            finish();
         }
 
         @Override
