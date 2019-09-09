@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.justcan.library.dialog.CBDialogBuilder;
 import com.justcan.library.utils.common.AppUtil;
 import com.justcan.library.utils.common.InputUtils;
@@ -41,6 +42,7 @@ import com.pickcle.picklework.http.download.HttpDownManager;
 import com.pickcle.picklework.http.listener.HttpDownOnNextListener;
 import com.pickcle.picklework.http.listener.HttpOnNextListener;
 import com.pickcle.picklework.model.bean.AppInfor;
+import com.pickcle.picklework.model.bean.AppInfosStorage;
 import com.pickcle.picklework.model.bean.BannerInfo;
 import com.pickcle.picklework.model.bean.DeviceRegisterResponse;
 import com.pickcle.picklework.model.bean.MainResponse;
@@ -48,11 +50,13 @@ import com.pickcle.picklework.model.http.api.AppDeviceRegisterApi;
 import com.pickcle.picklework.model.http.api.AppMainApi;
 import com.pickcle.picklework.model.http.request.DeviceRegisterRequest;
 import com.pickcle.picklework.model.http.request.MainRequest;
+import com.pickcle.picklework.util.LogUtil;
 import com.pickcle.picklework.util.SdcardUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.stardust.autojs.core.storage.LocalStorage;
 import com.zhouwei.mzbanner.MZBannerView;
 import com.zhouwei.mzbanner.holder.MZHolderCreator;
 
@@ -327,6 +331,9 @@ public class MainActivity extends BaseTitleCompatActivity {
     private void downloadApk(final AppInfor appInfor) {
         filePath = SdcardUtils.sdPath + "app_run/" + appInfor.getAppName() + ".apk";
         File file = new File(filePath);
+        if (file.exists()) {
+            file.delete();
+        }
         DownInfo downInfo = null;
         if (!StringUtils.isEmpty(appInfor.getAppDownUrlQuick())) {
             downInfo = new DownInfo(appInfor.getAppDownUrlQuick());

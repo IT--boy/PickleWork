@@ -395,6 +395,12 @@ public class MainWorkActivity extends BaseTitleCompatActivity {
         startActivity(gotoJoin);*/
     }
 
+    //自定义方案
+    @OnClick(R.id.gotoProgram)
+    public void gotoProgram(View view) {
+        Intent gotoProgram = new Intent(getContext(), ProgramsActivity.class);
+        startActivity(gotoProgram);
+    }
     //开始打工
     @OnClick(R.id.btnStartWork)
     public void btnStartWork(View view) {

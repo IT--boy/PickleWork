@@ -4,7 +4,7 @@ apply plugin: 'tinkerpatch-support'
  * TODO: 请按自己的需求修改为适应自己工程的参数
  */
 def bakPath = file("${buildDir}/outputs/apk/")
-def baseInfo = "app-1.0.7-0904-12-02-19"
+def baseInfo = "app-1.0.8-0908-10-38-41"
 def variantName = "release"
 
 /**
@@ -36,7 +36,7 @@ tinkerpatchSupport {
     appKey = "ad246e593b6e86c1"
 
     /** 注意: 若发布新的全量包, appVersion一定要更新 **/
-    appVersion = "1.0.7"
+    appVersion = "1.0.8"
     println(baseInfo)
     def pathPrefix = "${bakPath}/${baseInfo}/${variantName}"
     def name = "${project.name}-${variantName}"

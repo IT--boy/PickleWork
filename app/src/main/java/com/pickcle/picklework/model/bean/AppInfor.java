@@ -23,6 +23,13 @@ public class AppInfor {
     private Integer recommendFlag;
     //外接下载地址
     private String appDownUrlQuick;
+    //简称
+    private String appShortName;
+    //次数
+    private Integer appTimes;
+
+    private boolean checkFlag;
+
 
     public String getAppName() {
         return appName;
@@ -110,5 +117,29 @@ public class AppInfor {
 
     public void setAppDownUrlQuick(String appDownUrlQuick) {
         this.appDownUrlQuick = appDownUrlQuick;
+    }
+
+    public String getAppShortName() {
+        return appShortName;
+    }
+
+    public void setAppShortName(String appShortName) {
+        this.appShortName = appShortName;
+    }
+
+    public Integer getAppTimes() {
+        return appTimes;
+    }
+
+    public void setAppTimes(Integer appTimes) {
+        this.appTimes = appTimes;
+    }
+
+    public boolean isCheckFlag() {
+        return checkFlag;
+    }
+
+    public void setCheckFlag(boolean checkFlag) {
+        this.checkFlag = checkFlag;
     }
 }

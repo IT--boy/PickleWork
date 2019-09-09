@@ -90,6 +90,9 @@
         <activity android:name="com.pickcle.picklework.ui.PermissionSettingActivity">
 
         </activity>
+        <activity android:name="com.pickcle.picklework.ui.ProgramsActivity">
+
+        </activity>
         <service
             android:name="com.stardust.notification.NotificationListenerService"
             android:label="咸菜打工"
